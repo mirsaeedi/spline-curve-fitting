@@ -1,0 +1,24 @@
+{
+  "name": "BSplineCalculations",
+  "authors": [
+    "Ehsan Mirsaeedi <mirsaeedi@outlook.com>"
+  ],
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "bootstrap": "3.3.6",
+    "jquery": "2.2.4",
+    "knockout": "3.4.0",
+    "plotly.js": "*",
+    "mathjs": "*"
+  },
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
