@@ -44,15 +44,18 @@ var centripetalMethod = function (dataPoints,a) {
 
     var parameters = [0];
 
+    var n = dataPoints.length - 1;
     var totalLength = 0;
     var l = [];
 
-    for (var k = 0; k < dataPoints.length - 1; k++) {
+    parameters[0]=0;
+
+    for (var k = 1; k <= n; k++) {
 
         var length = math.
         distance(
         { pointOneX: dataPoints[k].X, pointOneY: dataPoints[k].Y },
-        { pointTwoX: dataPoints[k + 1].X, pointTwoY: dataPoints[k + 1].Y });
+        { pointTwoX: dataPoints[k - 1].X, pointTwoY: dataPoints[k - 1].Y });
 
         var distanceK = math.pow(length,a);
 
@@ -60,9 +63,11 @@ var centripetalMethod = function (dataPoints,a) {
         l.push(totalLength);
     }
 
-    for (var k = 0; k < dataPoints.length - 1; k++) {
+    for (var k = 0; k < n; k++) {
         parameters.push(l[k] / totalLength);
     }
+
+    parameters[n]=1;
 
     return parameters;
 

@@ -6,7 +6,7 @@
 
     this.plot= function() {
      
-        var plotDrawer = new PlotDrawer('plotly-canvas', $($('#plotly-canvas').parent()).width() - 100, $(window).height() - 100);
+        var plotDrawer = new PlotDrawer('plotly-canvas', $($('#plotly-canvas').parent()).width(), $(window).height() *1.5);
 
         var curvePoints = [];
 

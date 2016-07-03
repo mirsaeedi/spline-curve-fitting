@@ -23,7 +23,7 @@
         var cPoints = {
             x: [],
             y: [],
-            type: 'markers',
+            mode: 'markers',
             name: 'ControlPoints'
         };
 
@@ -40,7 +40,7 @@
         var dPoints = {
             x: [],
             y: [],
-            type: 'line+markers',
+            mode: 'markers',
             name: 'Data Points'
         };
 
