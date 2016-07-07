@@ -8,7 +8,6 @@
     <title>B-Spline</title>
 
     <link href="./wwwroot/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="./wwwroot/css/font.css" rel="stylesheet" />
     <script src="./wwwroot/lib/jquery/dist/jquery.min.js"></script>
 
 </head>
@@ -168,7 +167,7 @@
                 <div class="panel panel-success">
 
                     <div class="panel-heading">
-                        <h4>Result</h4>
+                        <h4>Result Panel</h4>
                     </div>
 
                     <div class="panel-body">
@@ -214,6 +213,11 @@
                                 <span data-bind="text:numberOfDataPoints"></span>
                             </div>
 
+                            <div class="col-md-3">
+                                <label>Number Of Functions</label>
+                                <span data-bind="text:numberOfFunctions"></span>
+                            </div>
+
                         </div>
 
                     </div>
@@ -228,7 +232,7 @@
                 <div class="panel panel-danger">
 
                     <div class="panel-heading" style="font-family: btitr">
-                        Plot Panel
+                        <h4>Plot Panel</h4>
                     </div>
 
                     <div class="panel-body" style="text-align: center">
@@ -256,7 +260,7 @@
     <script src="./wwwroot/js/ParameterSelectionMethods.js"></script>
     <script src="./wwwroot/js/BsplineCoxDeboorAlgorithm.js"></script>
     <script src="./wwwroot/js/BasisFunction.js"></script>
-    <script src="./wwwroot/js/LeastSquare.js"></script>
+    <script src="./wwwroot/js/BSplineLeastSquareApproximation.js"></script>
     <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
 
@@ -273,6 +277,15 @@
             file: ko.observable(),
             plot:function() {
 
+                /*
+                var dataPoint = [];    
+                for(var i=-10;i<10;i+=0.01){
+                    //dataPoint.push(new Point(i,Math.sin(i)));
+                    //dataPoint.push(new Point(i,Math.sin(i)*i));
+                    dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
+                }
+
+                plot({dataPoints:dataPoint});*/
                 InputReader.read($('#file')[0].files[0], plot);
             }
         }
@@ -284,6 +297,7 @@
             minDistance: ko.observable(),
             maxDistance: ko.observable(),
             avgDistance: ko.observable(),
+            numberOfFunctions:ko.observable(),
             totalLeastSquareDistance: ko.observable()
         }
 
@@ -296,9 +310,9 @@
 
                 if (controlPanelViewModel.fittingMode() == 2) {
 
-                    var leastSquare = new BSplineLeastSquare(jsonInput.dataPoints,
+                    var leastSquare = new BSplineLeastSquareApproximation(jsonInput.dataPoints,
                         parseInt(controlPanelViewModel.order()),
-                        parseInt(controlPanelViewModel.numberOfControlPoints()),
+                        parseInt(controlPanelViewModel.numberOfControlPoints()) - 1,
                         controlPanelViewModel.parameterSelection(),
                         controlPanelViewModel.knotSelection());
 
@@ -323,6 +337,7 @@
 
         function setResultPanel(result) {
 
+            resultViewModel.numberOfFunctions(result.knots.length - 2*controlPanelViewModel.order()-1);
             resultViewModel.numberOfDataPoints(result.params.length);
             resultViewModel.numberOfControlPoints(result.cp.length);
             resultViewModel.numberOfKnots ( result.knots.length);

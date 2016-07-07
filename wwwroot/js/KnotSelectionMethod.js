@@ -1,59 +1,68 @@
-﻿var uniformlySpaced = function(p,n) {
+﻿var knotVectorSelectionMethods = function () {
 
-    var knots = [];
+    var self={};
 
-    for (var i = 0; i < p+1; i++) {
-        knots.push(0);
-    }
+    self.uniformlySpaced = function (p, n) {
 
-    for (var i = 1; i <= n-p; i++) {
-        knots.push(i/(n-p+1));
-    }
+        var knots = [];
 
-    for (var i = 0; i < p + 1; i++) {
-        knots.push(1);
-    }
-
-    return knots;
-
-}
-
-var deboorAverage = function(p,h,parameters) {
-
-    var knots = [];
-    
-    var n = parameters.length -1;
-
-    for (var i = 0; i < p+1; i++) {
-        knots.push(0);
-    }
-
-    /*
-    for (var i = 1; i <= h - p ; i++) {
-
-        var sum=0.0;
-        for (var index = i; index < i+p; index++) {
-            sum+=parameters[index];
+        for (var i = 0; i < p + 1; i++) {
+            knots.push(0);
         }
 
-        knots.push(sum/p);
-    }
-    */
+        for (var i = 1; i <= n - p; i++) {
+            knots.push(i / (n - p + 1));
+        }
 
-    var d=(n)/(h-p);
+        for (var i = 0; i < p + 1; i++) {
+            knots.push(1);
+        }
 
-    for (var i = 1; i <= h - p ; i++) {
+        return knots;
 
-        var j=parseInt(i*d);
-        var alpha = i*d-j;
-            
-        knots.push(parameters[j-1]+alpha*(parameters[j-1]+parameters[j]));
     }
 
-    for (var i = 0; i < p + 1; i++) {
-        knots.push(1);
+    self.deboorAverage = function (p, h, parameters) {
+
+        var knots = [];
+
+        var n = parameters.length - 1;
+
+        for (var i = 0; i < p + 1; i++) {
+            knots.push(0);
+        }
+
+        /*
+        for (var i = 1; i <= h - p ; i++) {
+    
+            var sum=0.0;
+            for (var index = i; index < i+p; index++) {
+                sum+=parameters[index];
+            }
+    
+            knots.push(sum/p);
+        }
+        */
+
+        var d = (n) / (h - p);
+
+        for (var i = 1; i <= h - p; i++) {
+
+            var j = parseInt(i * d);
+            var alpha = i * d - j;
+
+            knots.push(parameters[j - 1] + alpha * (parameters[j - 1] + parameters[j]));
+        }
+
+        for (var i = 0; i < p + 1; i++) {
+            knots.push(1);
+        }
+
+        return knots;
+
     }
 
-    return knots;
+    return self;
 
-}
+} ();
+

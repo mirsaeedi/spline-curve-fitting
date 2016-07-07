@@ -1,4 +1,4 @@
-﻿var BSplineLeastSquare = function(dataPoints,
+﻿var BSplineLeastSquareApproximation = function(dataPoints,
 p,
 h,
 parameterSelectionMethodName,
@@ -136,13 +136,13 @@ knotSelectionMethodName) {
     function getParameters(dataPoints,parameterSelectionMethodName) {
         
         if(parameterSelectionMethodName==='uniformly-spaced'){
-            return uniformlySpacedMethod(dataPoints);
+            return parameterSelectionMethods.uniformlySpacedMethod(dataPoints);
         }
         else if (parameterSelectionMethodName==='chord-length'){
-            return chordLengthMethod(dataPoints);
+            return parameterSelectionMethods.chordLengthMethod(dataPoints);
         }
         else if (parameterSelectionMethodName==='centripetal'){
-            return centripetalMethod(dataPoints,0.8);
+            return parameterSelectionMethods.centripetalMethod(dataPoints,0.5);
         }   
 
     }
@@ -150,10 +150,10 @@ knotSelectionMethodName) {
     function getKnots(dataPoints,p,h,parameters,knotSelectionMethodName) {
         
         if(knotSelectionMethodName==='uniformly-spaced'){
-            return uniformlySpaced(p, h);
+            return knotVectorSelectionMethods.uniformlySpaced(p, h);
         }
         else if (knotSelectionMethodName==='deboor-average'){
-            return deboorAverage(p,h,parameters); 
+            return knotVectorSelectionMethods.deboorAverage(p,h,parameters); 
         }
 
     }
