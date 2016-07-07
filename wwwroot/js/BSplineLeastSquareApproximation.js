@@ -5,8 +5,9 @@ parameterSelectionMethodName,
 knotSelectionMethodName) {
 
     var n = dataPoints.length - 1;
-    var parameters = getParameters(dataPoints,parameterSelectionMethodName)
-    var knots = getKnots(dataPoints,p,h,parameters,knotSelectionMethodName)
+
+    var parameters = parameterSelectionMethods.getParameters(dataPoints,parameterSelectionMethodName);
+    var knots = knotVectorSelectionMethods.getKnots(dataPoints,p,h,parameters,knotSelectionMethodName);
 
     this.compute = function() {
 
@@ -133,28 +134,4 @@ knotSelectionMethodName) {
         return N;
     }
 
-    function getParameters(dataPoints,parameterSelectionMethodName) {
-        
-        if(parameterSelectionMethodName==='uniformly-spaced'){
-            return parameterSelectionMethods.uniformlySpacedMethod(dataPoints);
-        }
-        else if (parameterSelectionMethodName==='chord-length'){
-            return parameterSelectionMethods.chordLengthMethod(dataPoints);
-        }
-        else if (parameterSelectionMethodName==='centripetal'){
-            return parameterSelectionMethods.centripetalMethod(dataPoints,0.5);
-        }   
-
-    }
-
-    function getKnots(dataPoints,p,h,parameters,knotSelectionMethodName) {
-        
-        if(knotSelectionMethodName==='uniformly-spaced'){
-            return knotVectorSelectionMethods.uniformlySpaced(p, h);
-        }
-        else if (knotSelectionMethodName==='deboor-average'){
-            return knotVectorSelectionMethods.deboorAverage(p,h,parameters); 
-        }
-
-    }
 }

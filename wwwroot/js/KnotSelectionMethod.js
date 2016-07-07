@@ -1,6 +1,17 @@
 ﻿var knotVectorSelectionMethods = function () {
 
     var self={};
+    
+    self.getKnots=function(dataPoints,p,h,parameters,knotSelectionMethodName) {
+        
+        if(knotSelectionMethodName==='uniformly-spaced'){
+            return knotVectorSelectionMethods.uniformlySpaced(p, h);
+        }
+        else if (knotSelectionMethodName==='deboor-average'){
+            return knotVectorSelectionMethods.deboorAverage(p,h,parameters); 
+        }
+
+    }
 
     self.uniformlySpaced = function (p, n) {
 

@@ -121,7 +121,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2 || fittingMode()==3">
+                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2">
                                 <div class="form-group">
                                     <label class="">
                                         Number Of Control Points
@@ -261,6 +261,7 @@
     <script src="./wwwroot/js/BsplineCoxDeboorAlgorithm.js"></script>
     <script src="./wwwroot/js/BasisFunction.js"></script>
     <script src="./wwwroot/js/BSplineLeastSquareApproximation.js"></script>
+    <script src="./wwwroot/js/BSplineInterpolation.js"></script>
     <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
 
@@ -278,11 +279,12 @@
             plot:function() {
 
                 /*
+                
                 var dataPoint = [];    
-                for(var i=-10;i<10;i+=0.01){
+                for(var i=-15;i<15;i+=0.001){
                     //dataPoint.push(new Point(i,Math.sin(i)));
-                    //dataPoint.push(new Point(i,Math.sin(i)*i));
-                    dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
+                    dataPoint.push(new Point(i,Math.sin(i)*i));
+                    //dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
                 }
 
                 plot({dataPoints:dataPoint});*/
@@ -310,13 +312,13 @@
 
                 if (controlPanelViewModel.fittingMode() == 2) {
 
-                    var leastSquare = new BSplineLeastSquareApproximation(jsonInput.dataPoints,
+                    var approximator = new BSplineLeastSquareApproximation(jsonInput.dataPoints,
                         parseInt(controlPanelViewModel.order()),
                         parseInt(controlPanelViewModel.numberOfControlPoints()) - 1,
                         controlPanelViewModel.parameterSelection(),
                         controlPanelViewModel.knotSelection());
 
-                    var result = leastSquare.compute();
+                    var result = approximator.compute();
 
                     setResultPanel(result);
 
@@ -327,7 +329,22 @@
                     plotter.plot();
 
                 }
-                else if (controlPanelViewModel.fittingMode() == 1) {
+                else if (controlPanelViewModel.fittingMode() == 3) {
+
+                    var interpolator = new BSplineInterpolation(jsonInput.dataPoints,
+                        parseInt(controlPanelViewModel.order()),
+                        controlPanelViewModel.parameterSelection(),
+                        controlPanelViewModel.knotSelection());
+
+                    var result = interpolator.compute();
+
+                    setResultPanel(result);
+
+                    var plotter = new BSplinePlotter(result.cp, result.knots,
+                        parseInt(controlPanelViewModel.order()),
+                        jsonInput.dataPoints);
+
+                    plotter.plot();
 
                 }
 
@@ -341,11 +358,14 @@
             resultViewModel.numberOfDataPoints(result.params.length);
             resultViewModel.numberOfControlPoints(result.cp.length);
             resultViewModel.numberOfKnots ( result.knots.length);
-            resultViewModel.minDistance(result.error.minDistance.toFixed(4));
-            resultViewModel.maxDistance(result.error.maxDistance.toFixed(4));
-            resultViewModel.avgDistance((result.error.totalDistance / result.params.length).toFixed(4));
-            resultViewModel.totalLeastSquareDistance(result.error.totalLeastSquareDistance.toFixed(4));
 
+            if(controlPanelViewModel.fittingMode() == 2){
+                resultViewModel.minDistance(result.error.minDistance.toFixed(4));
+                resultViewModel.maxDistance(result.error.maxDistance.toFixed(4));   
+                resultViewModel.avgDistance((result.error.totalDistance / result.params.length).toFixed(4));
+                resultViewModel.totalLeastSquareDistance(result.error.totalLeastSquareDistance.toFixed(4));
+            }
+        
         }
 
     </script>

@@ -2,6 +2,19 @@
 
     var self={};
 
+    self.getParameters=function(dataPoints,parameterSelectionMethodName) {
+        
+        if(parameterSelectionMethodName==='uniformly-spaced'){
+            return parameterSelectionMethods.uniformlySpacedMethod(dataPoints);
+        }
+        else if (parameterSelectionMethodName==='chord-length'){
+            return parameterSelectionMethods.chordLengthMethod(dataPoints);
+        }
+        else if (parameterSelectionMethodName==='centripetal'){
+            return parameterSelectionMethods.centripetalMethod(dataPoints,0.5);
+        }   
+    }
+
     self.uniformlySpacedMethod = function (dataPoints) {
 
         var parameters = [];
