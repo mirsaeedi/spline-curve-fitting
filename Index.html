@@ -70,7 +70,7 @@
 
                         <div class="row" id="bspline-control-panel">
 
-                            <div class="col-md-3">
+                            <div class="col-md-3" data-bind="visible:spline()==1">
                                 <div class="form-group">
                                     <label class="">
                                         Order
@@ -79,6 +79,9 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                         <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
                                     </select>
                                 </div>
                             </div>
@@ -90,8 +93,8 @@
                                     </label>
                                     <select class="form-control" data-bind="value:fittingMode">
                                         <option value="1">Using Control Points</option>
-                                        <option value="2">Approximation</option>
-                                        <option value="3">Interpolation</option>
+                                        <option data-bind="visible:spline()==1" value="3">Interpolation</option>
+                                        <option data-bind="visible:spline()==1" value="2">Approximation</option>
                                     </select>
                                 </div>
                             </div>
@@ -146,7 +149,7 @@
                                     </label>
                                     <select class="form-control" data-bind="value:noiseReductionAlgorithm">
                                         <option value="0">Do Not Remove Any Noise</option>
-                                        <option value="1">Use Douglas-Peucker</option>
+                                        <option value="1">Ramer-Douglas-Peucker</option>
                                     </select>
                                 </div>
                             </div>
@@ -273,6 +276,9 @@
     <script src="./wwwroot/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./wwwroot/lib/plotly.js/dist/plotly.min.js"></script>
 
+    <script src="./wwwroot/js/BezierPlotter.js"></script>
+    <script src="./wwwroot/js/DeCasteljauAlgorithm.js"></script>
+
     <script src="./wwwroot/js/PlotDrawer.js"></script>
     <script src="./wwwroot/js/BSplinePlotter.js"></script>
     <script src="./wwwroot/js/Point.js"></script>
@@ -387,8 +393,26 @@
 
                 }
 
-            }
+                else if (controlPanelViewModel.fittingMode() == 1) {
 
+                    var plotter = new BSplinePlotter(jsonInput.controlPoints,
+                        jsonInput.knots,
+                        jsonInput.order);
+
+                    plotter.plot();
+
+                }
+
+            }
+            else  if (controlPanelViewModel.spline() == 2) {
+
+                if (controlPanelViewModel.fittingMode() == 1) {
+
+                    var plotter = new BezierPlotter(jsonInput.controlPoints);
+                    plotter.plot();
+
+                }
+            }
         }
 
         function setResultPanel(result) {
