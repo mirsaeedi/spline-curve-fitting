@@ -20,8 +20,8 @@ knotSelectionMethodName) {
         var qY = [];
 
         for (var i = 0; i < h-1; i++) {
-            qX.push(Q[i].X);
-            qY.push(Q[i].Y);
+            qX.push(Q[i].x);
+            qY.push(Q[i].y);
         }
 
         var pX = math.lusolve(NTN, qX);
@@ -56,8 +56,8 @@ knotSelectionMethodName) {
         for (var i = 1; i < parameters.length-1; i++) {
 
             var curvePoint = algorithm.compute(parameters[i]);
-            var distance = math.distance({ pointOneX: curvePoint.X, pointOneY: curvePoint.Y },
-                { pointTwoX: dataPoints[i].X, pointTwoY: dataPoints[i].Y });
+            var distance = math.distance({ pointOneX: curvePoint.x, pointOneY: curvePoint.y },
+                { pointTwoX: dataPoints[i].x, pointTwoY: dataPoints[i].y });
 
             result.distances.push(distance);
 
@@ -90,8 +90,8 @@ knotSelectionMethodName) {
 
                 var basis = basisFunction.compute(parameters[k], i, p);
                 var qK = computeqk(k);
-                sumX +=  basis * qK.X;
-                sumY += basis * qK.Y;
+                sumX +=  basis * qK.x;
+                sumY += basis * qK.y;
             }
 
             Q.push(new Point(sumX, sumY));
@@ -106,11 +106,11 @@ knotSelectionMethodName) {
         var basisZero = basisFunction.compute(parameters[k], 0, p);
         var basisH = basisFunction.compute(parameters[k], h, p);
 
-        var x = dataPoints[k].X
-            - basisZero * dataPoints[0].X - basisH * dataPoints[n].X;
+        var x = dataPoints[k].x
+            - basisZero * dataPoints[0].x - basisH * dataPoints[n].x;
 
-        var y = dataPoints[k].Y
-            - basisZero * dataPoints[0].Y - basisH * dataPoints[n].Y;
+        var y = dataPoints[k].y
+            - basisZero * dataPoints[0].y - basisH * dataPoints[n].y;
 
         return new Point(x, y);
     }

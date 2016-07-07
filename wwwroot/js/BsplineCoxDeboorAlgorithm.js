@@ -38,8 +38,8 @@
         var first = innerCompute(upIndex - 1, downIndex - 1, t);
         var second = innerCompute(upIndex - 1, downIndex, t);
 
-        var x = ((1 - proportion) * first.X) + (proportion * second.X);
-        var y = ((1 - proportion) * first.Y) + (proportion * second.Y);
+        var x = ((1 - proportion) * first.x) + (proportion * second.x);
+        var y = ((1 - proportion) * first.y) + (proportion * second.y);
 
         var result = new Point(x, y);
 

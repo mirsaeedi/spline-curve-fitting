@@ -1,4 +1,4 @@
-﻿var BSplinePlotter = function(controlPoints,knots,p,dataPoints) {
+﻿var BSplinePlotter = function(controlPoints,knots,p,dataPoints,noiseLessPoints) {
     
     var bsplineOrder = p + 1;
 
@@ -21,7 +21,8 @@
         { range: [-20, 20], dtick: 1 },
         { range: [-20, 20], dtick: 1 },
         controlPoints,
-        dataPoints);
+        dataPoints,
+        noiseLessPoints);
 
     }
 }

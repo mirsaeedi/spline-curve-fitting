@@ -139,15 +139,34 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
+                             <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2">
+                                 <div class="form-group">
+                                    <label class="">
+                                        Noise Reduction
+                                    </label>
+                                    <select class="form-control" data-bind="value:noiseReductionAlgorithm">
+                                        <option value="0">Do Not Remove Any Noise</option>
+                                        <option value="1">Use Douglas-Peucker</option>
+                                    </select>
+                                </div>
+                            </div>
 
+                            <div class="col-md-3" data-bind="visible:fittingMode()==2 && noiseReductionAlgorithm()==1">
+                                <div class="form-group">
+                                    <label class="">
+                                        Tolerance
+                                    </label>
+                                    <input data-bind="value:tolerance" type="number" class="form-control" value="" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="">
                                         File
                                     </label>
                                     <input id="file" data-bind="value:file" class="form-control" type="file" value="" />
                                 </div>
-
                             </div>
                         </div>
 
@@ -262,6 +281,7 @@
     <script src="./wwwroot/js/BasisFunction.js"></script>
     <script src="./wwwroot/js/BSplineLeastSquareApproximation.js"></script>
     <script src="./wwwroot/js/BSplineInterpolation.js"></script>
+    <script src="./wwwroot/js/RamerDouglasPeuckerAlgorithm.js"></script>
     <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
 
@@ -275,6 +295,8 @@
             knotSelection: ko.observable(1),
             numberOfControlPoints: ko.observable(),
             errorLimit: ko.observable(),
+            tolerance: ko.observable(),
+            noiseReductionAlgorithm: ko.observable(),
             file: ko.observable(),
             plot:function() {
 
@@ -308,11 +330,24 @@
 
         function plot(jsonInput) {
 
+            var dataPoints = [];
+
+            if(controlPanelViewModel.noiseReductionAlgorithm()==1){
+
+                var ramerDouglasPeuckerAlgorithm = new RamerDouglasPeuckerAlgorithm();
+                dataPoints = ramerDouglasPeuckerAlgorithm
+                    .compute(jsonInput.dataPoints,controlPanelViewModel.tolerance());
+
+            }
+            else{
+                dataPoints = jsonInput.dataPoints;
+            }
+
             if (controlPanelViewModel.spline() == 1) {
 
                 if (controlPanelViewModel.fittingMode() == 2) {
 
-                    var approximator = new BSplineLeastSquareApproximation(jsonInput.dataPoints,
+                    var approximator = new BSplineLeastSquareApproximation(dataPoints,
                         parseInt(controlPanelViewModel.order()),
                         parseInt(controlPanelViewModel.numberOfControlPoints()) - 1,
                         controlPanelViewModel.parameterSelection(),
@@ -322,16 +357,18 @@
 
                     setResultPanel(result);
 
-                    var plotter = new BSplinePlotter(result.cp, result.knots,
+                    var plotter = new BSplinePlotter(result.cp,
+                        result.knots,
                         parseInt(controlPanelViewModel.order()),
-                        jsonInput.dataPoints);
+                        jsonInput.dataPoints,
+                        dataPoints);
 
                     plotter.plot();
 
                 }
                 else if (controlPanelViewModel.fittingMode() == 3) {
 
-                    var interpolator = new BSplineInterpolation(jsonInput.dataPoints,
+                    var interpolator = new BSplineInterpolation(dataPoints,
                         parseInt(controlPanelViewModel.order()),
                         controlPanelViewModel.parameterSelection(),
                         controlPanelViewModel.knotSelection());
@@ -340,9 +377,11 @@
 
                     setResultPanel(result);
 
-                    var plotter = new BSplinePlotter(result.cp, result.knots,
+                    var plotter = new BSplinePlotter(result.cp,
+                        result.knots,
                         parseInt(controlPanelViewModel.order()),
-                        jsonInput.dataPoints);
+                        jsonInput.dataPoints,
+                        dataPoints);
 
                     plotter.plot();
 

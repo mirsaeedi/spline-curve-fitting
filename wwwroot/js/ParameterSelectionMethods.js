@@ -41,8 +41,8 @@
 
             var distanceK = math.
                 distance(
-                { pointOneX: dataPoints[k].X, pointOneY: dataPoints[k].Y },
-                { pointTwoX: dataPoints[k + 1].X, pointTwoY: dataPoints[k + 1].Y });
+                { pointOneX: dataPoints[k].x, pointOneY: dataPoints[k].y },
+                { pointTwoX: dataPoints[k + 1].x, pointTwoY: dataPoints[k + 1].y });
 
             totalLength += distanceK;
             l.push(totalLength);
@@ -70,8 +70,8 @@
 
             var length = math.
                 distance(
-                { pointOneX: dataPoints[k].X, pointOneY: dataPoints[k].Y },
-                { pointTwoX: dataPoints[k - 1].X, pointTwoY: dataPoints[k - 1].Y });
+                { pointOneX: dataPoints[k].x, pointOneY: dataPoints[k].y },
+                { pointTwoX: dataPoints[k - 1].x, pointTwoY: dataPoints[k - 1].y });
 
             var distanceK = math.pow(length, a);
 
