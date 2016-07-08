@@ -44,6 +44,64 @@
 
             <div class="col-md-12" id="controlPanel">
 
+<div class="modal fade" tabindex="-1" role="dialog" id="approximationModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Approximation Settings</h4>
+                </div>
+
+                <div class="modal-body" data-bind="with:approximationSettings">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="">Initial Number Of Control Points</label>
+                                <input type="number" class="form-control" data-bind="value:initialNumberOfControlPoints">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="checkbox" data-bind="checked:useKnotHueristics">
+                                <label class="">Use Knot Placement Hueristics</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="radio" name="approximationEndCondition" value="errorBounded"
+                                data-bind="checked:approximationEndCondition">
+                                <label class="">Reach Max Error</label>
+                                <input type="number" class="form-control"
+                                 data-bind="disable:approximationEndCondition()!='errorBounded',value:errorBound">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="radio" name="approximationEndCondition" value="iterationBounded"
+                                data-bind="checked:approximationEndCondition">
+                                <label class="">Max Number Of Control Points</label>
+                                <input type="number" class="form-control"
+                                 data-bind="disable:approximationEndCondition()!='iterationBounded',value:maxNumberOfControlPoints">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
                 <div class="panel panel-primary">
 
                     <div class="panel-heading">
@@ -61,8 +119,8 @@
                                         Spline
                                     </label>
                                     <select class="form-control" data-bind="value:spline">
-                                        <option selected value="1">B-Spline</option>
-                                        <option value="2">Bezier</option>
+                                        <option selected value="bspline">B-Spline</option>
+                                        <option value="bezier">Bezier</option>
                                     </select>
                                 </div>
                             </div>
@@ -70,7 +128,7 @@
 
                         <div class="row" id="bspline-control-panel">
 
-                            <div class="col-md-3" data-bind="visible:spline()==1">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline'">
                                 <div class="form-group">
                                     <label class="">
                                         Order
@@ -92,14 +150,14 @@
                                         Fitting Mode
                                     </label>
                                     <select class="form-control" data-bind="value:fittingMode">
-                                        <option value="1">Using Control Points</option>
-                                        <option data-bind="visible:spline()==1" value="3">Interpolation</option>
-                                        <option data-bind="visible:spline()==1" value="2">Approximation</option>
+                                        <option value="controlPoints">Using Control Points</option>
+                                        <option data-bind="visible:spline()=='bspline'" value="interpolation">Interpolation</option>
+                                        <option data-bind="visible:spline()=='bspline'" value="approximation">Approximation</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2 || fittingMode()==3">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation' || fittingMode()=='interpolation'">
                                 <div class="form-group">
                                     <label class="">
                                         Parameter Selection
@@ -112,38 +170,46 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2 || fittingMode()==3">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation' || fittingMode()=='interpolation'">
                                 <div class="form-group">
                                     <label class="">
                                         Knot Selection
                                     </label>
-                                    <select class="form-control" data-bind="visible:spline()==1 && fittingMode()==2 || fittingMode()==3,value:knotSelection">
+                                    <select class="form-control" data-bind="value:knotSelection">
                                         <option value="uniformly-spaced">Uniformly Spaced</option>
                                         <option value="deboor-average">Deboor Average</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation'">
                                 <div class="form-group">
+                                    <input type="radio" name="approximationType" value="non-iterative" data-bind="checked: approximationType">
                                     <label class="">
                                         Number Of Control Points
                                     </label>
-                                    <input data-bind="value:numberOfControlPoints" type="number" class="form-control" value="" />
+                                    <input data-bind="value:numberOfControlPoints,disable:approximationType()=='iterative'" type="number" class="form-control"
+                                        value="" />
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation'">
+
                                 <div class="form-group">
+                                    <input type="radio" name="approximationType" value="iterative" data-bind="checked: approximationType">
                                     <label class="">
                                         Error Limit (avg)
                                     </label>
-                                    <input data-bind="value:errorLimit" type="number" class="form-control" value="" />
+                                    <div>
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#approximationModal" data-bind="disable:approximationType()!='iterative'">
+                                            Settings
+                                    </button>
+                                    </div>
                                 </div>
                             </div>
 
-                             <div class="col-md-3" data-bind="visible:spline()==1 && fittingMode()==2">
-                                 <div class="form-group">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation'">
+                                <div class="form-group">
                                     <label class="">
                                         Noise Reduction
                                     </label>
@@ -154,7 +220,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3" data-bind="visible:fittingMode()==2 && noiseReductionAlgorithm()==1">
+                            <div class="col-md-3" data-bind="visible:fittingMode()=='approximation' && noiseReductionAlgorithm()==1">
                                 <div class="form-group">
                                     <label class="">
                                         Tolerance
@@ -242,6 +308,12 @@
 
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div id="result-canvas"></div>
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -286,151 +358,17 @@
     <script src="./wwwroot/js/BsplineCoxDeboorAlgorithm.js"></script>
     <script src="./wwwroot/js/BasisFunction.js"></script>
     <script src="./wwwroot/js/BSplineLeastSquareApproximation.js"></script>
+    <script src="./wwwroot/js/BSplineIterativeApproximation.js"></script>
+    <script src="./wwwroot/js/BSplineIterativeApproximationPlotter.js"></script>
     <script src="./wwwroot/js/BSplineInterpolation.js"></script>
     <script src="./wwwroot/js/RamerDouglasPeuckerAlgorithm.js"></script>
     <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
 
+    <script src="./wwwroot/js/main.js"></script>
+
     <script>
-        var controlPanelViewModel = {
-            spline: ko.observable(1),
-            algrothim: ko.observable(),
-            order: ko.observable(3),
-            fittingMode: ko.observable(2),
-            parameterSelection: ko.observable(1),
-            knotSelection: ko.observable(1),
-            numberOfControlPoints: ko.observable(),
-            errorLimit: ko.observable(),
-            tolerance: ko.observable(),
-            noiseReductionAlgorithm: ko.observable(),
-            file: ko.observable(),
-            plot:function() {
-
-                /*
-                
-                var dataPoint = [];    
-                for(var i=-15;i<15;i+=0.001){
-                    //dataPoint.push(new Point(i,Math.sin(i)));
-                    dataPoint.push(new Point(i,Math.sin(i)*i));
-                    //dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
-                }
-
-                plot({dataPoints:dataPoint});*/
-                InputReader.read($('#file')[0].files[0], plot);
-            }
-        }
-
-        var resultViewModel = {
-            numberOfKnots: ko.observable(),
-            numberOfControlPoints: ko.observable(),
-            numberOfDataPoints: ko.observable(),
-            minDistance: ko.observable(),
-            maxDistance: ko.observable(),
-            avgDistance: ko.observable(),
-            numberOfFunctions:ko.observable(),
-            totalLeastSquareDistance: ko.observable()
-        }
-
-        ko.applyBindings(controlPanelViewModel, document.getElementById('controlPanel'));
-        ko.applyBindings(resultViewModel, document.getElementById('resultPanel'));
-
-        function plot(jsonInput) {
-
-            var dataPoints = [];
-
-            if(controlPanelViewModel.noiseReductionAlgorithm()==1){
-
-                var ramerDouglasPeuckerAlgorithm = new RamerDouglasPeuckerAlgorithm();
-                dataPoints = ramerDouglasPeuckerAlgorithm
-                    .compute(jsonInput.dataPoints,controlPanelViewModel.tolerance());
-
-            }
-            else{
-                dataPoints = jsonInput.dataPoints;
-            }
-
-            if (controlPanelViewModel.spline() == 1) {
-
-                if (controlPanelViewModel.fittingMode() == 2) {
-
-                    var approximator = new BSplineLeastSquareApproximation(dataPoints,
-                        parseInt(controlPanelViewModel.order()),
-                        parseInt(controlPanelViewModel.numberOfControlPoints()) - 1,
-                        controlPanelViewModel.parameterSelection(),
-                        controlPanelViewModel.knotSelection());
-
-                    var result = approximator.compute();
-
-                    setResultPanel(result);
-
-                    var plotter = new BSplinePlotter(result.cp,
-                        result.knots,
-                        parseInt(controlPanelViewModel.order()),
-                        jsonInput.dataPoints,
-                        dataPoints);
-
-                    plotter.plot();
-
-                }
-                else if (controlPanelViewModel.fittingMode() == 3) {
-
-                    var interpolator = new BSplineInterpolation(dataPoints,
-                        parseInt(controlPanelViewModel.order()),
-                        controlPanelViewModel.parameterSelection(),
-                        controlPanelViewModel.knotSelection());
-
-                    var result = interpolator.compute();
-
-                    setResultPanel(result);
-
-                    var plotter = new BSplinePlotter(result.cp,
-                        result.knots,
-                        parseInt(controlPanelViewModel.order()),
-                        jsonInput.dataPoints,
-                        dataPoints);
-
-                    plotter.plot();
-
-                }
-
-                else if (controlPanelViewModel.fittingMode() == 1) {
-
-                    var plotter = new BSplinePlotter(jsonInput.controlPoints,
-                        jsonInput.knots,
-                        jsonInput.order);
-
-                    plotter.plot();
-
-                }
-
-            }
-            else  if (controlPanelViewModel.spline() == 2) {
-
-                if (controlPanelViewModel.fittingMode() == 1) {
-
-                    var plotter = new BezierPlotter(jsonInput.controlPoints);
-                    plotter.plot();
-
-                }
-            }
-        }
-
-        function setResultPanel(result) {
-
-            resultViewModel.numberOfFunctions(result.knots.length - 2*controlPanelViewModel.order()-1);
-            resultViewModel.numberOfDataPoints(result.params.length);
-            resultViewModel.numberOfControlPoints(result.cp.length);
-            resultViewModel.numberOfKnots ( result.knots.length);
-
-            if(controlPanelViewModel.fittingMode() == 2){
-                resultViewModel.minDistance(result.error.minDistance.toFixed(4));
-                resultViewModel.maxDistance(result.error.maxDistance.toFixed(4));   
-                resultViewModel.avgDistance((result.error.totalDistance / result.params.length).toFixed(4));
-                resultViewModel.totalLeastSquareDistance(result.error.totalLeastSquareDistance.toFixed(4));
-            }
-        
-        }
-
+    
     </script>
 
 </body>

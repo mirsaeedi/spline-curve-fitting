@@ -37,7 +37,7 @@ knotSelectionMethodName) {
 
         var error = computeErrors(controlPoints,knots,parameters);
 
-        return { cp: controlPoints, knots: knots, params : parameters,error:error };
+        return { cp: controlPoints, knots: knots, params : parameters,error:error,order:p };
 
     }
 

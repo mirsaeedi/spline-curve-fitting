@@ -14,8 +14,8 @@ knotSelectionMethodName) {
         var dX=[],dY=[];
 
         for (var i = 0; i <=n ; i++) {
-            dX.push(dataPoints[i].X);
-            dY.push(dataPoints[i].Y);
+            dX.push(dataPoints[i].x);
+            dY.push(dataPoints[i].y);
         }
 
         var pX = math.lusolve(N, dX);
