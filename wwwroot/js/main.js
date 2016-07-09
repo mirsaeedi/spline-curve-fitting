@@ -1,8 +1,8 @@
 var controlPanelViewModel = {
-    spline: ko.observable(1),
+    spline: ko.observable('bspline'),
     algrothim: ko.observable(),
     order: ko.observable(3),
-    fittingMode: ko.observable(2),
+    fittingMode: ko.observable('approximation'),
     parameterSelection: ko.observable(1),
     knotSelection: ko.observable(1),
     numberOfControlPoints: ko.observable(5),
@@ -19,8 +19,28 @@ var controlPanelViewModel = {
         useKnotHueristics: ko.observable(false),
     },
     plot: function () {
-
+        
         /*
+        var floors = [1,4,8,-10,13,20,-8,18,3,-19,9]
+
+        var dataPoint = [];
+        var selectedFloor=0;
+        var countOfSelectedFoor=5;
+
+        for (var i = -10; i < 10; i += 0.1) {
+
+            if(countOfSelectedFoor==5){
+                countOfSelectedFoor=0;
+                selectedFloor=Math.floor((Math.random() * floors.length));
+            }
+
+            dataPoint.push(new Point(i, selectedFloor+(Math.random()*4-2)));
+            countOfSelectedFoor++;
+        }
+
+        plot({ dataPoints: dataPoint });
+
+        
         var dataPoint = [];
         for (var i = -10; i < 10; i += 0.01) {
             //dataPoint.push(new Point(i,Math.sin(i)));
@@ -29,7 +49,7 @@ var controlPanelViewModel = {
         }
 
         plot({ dataPoints: dataPoint });*/
-        
+
         InputReader.read($('#file')[0].files[0], plot);
     }
 }
@@ -62,7 +82,7 @@ function plot(jsonInput) {
                 iterativeBSplineApproximation(jsonInput,dataPoints);
         }
         else if (controlPanelViewModel.fittingMode() == 'interpolation')
-            bsplineInterpolation(jsonInput);
+            bsplineInterpolation(jsonInput,dataPoints);
         else if (controlPanelViewModel.fittingMode() == 'controlPoints')
             bsplineControlPoints(jsonInput);
 
@@ -102,7 +122,8 @@ function bsplineControlPoints(jsonInput) {
     plotter.plot();
 }
 
-function bsplineInterpolation(jsonInput) {
+function bsplineInterpolation(jsonInput,dataPoints) {
+
     var interpolator = new BSplineInterpolation(dataPoints,
         parseInt(controlPanelViewModel.order()),
         controlPanelViewModel.parameterSelection(),
