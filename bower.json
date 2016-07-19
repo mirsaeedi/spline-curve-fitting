@@ -10,6 +10,7 @@
     "jquery": "2.2.4",
     "knockout": "3.4.0",
     "plotly.js": "*",
+    "FileSaver.js":"latest",
     "mathjs": "*"
   },
   "license": "MIT",
