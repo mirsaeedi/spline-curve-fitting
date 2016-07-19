@@ -200,9 +200,6 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
 
     var blob = new Blob([JSON.stringify(result)], {type: "text/plain;charset=utf-8"});
     saveAs(blob,"Approximation Result.txt");
-
-    var file = new Blob([JSON.stringify(result)], "Approximation Result.txt", {type: "text/plain;charset=utf-8"});
-    saveAs(file);
 }
 
 function setResultPanel(result) {
