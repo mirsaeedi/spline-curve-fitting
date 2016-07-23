@@ -29,6 +29,9 @@ useKnotHueristics) {
 
                     var result = approximator.compute();
 
+                    if(result.error=="singular matrix")
+                        continue;
+
                     self.results.push(result);
                         
                     if(result.error.maxDistance<=maxError)

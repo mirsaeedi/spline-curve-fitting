@@ -52,6 +52,8 @@
             parameters.push(l[k] / totalLength);
         }
 
+        parameters.push(1);
+
         return parameters;
 
     }

@@ -42,9 +42,9 @@ var controlPanelViewModel = {
 
         
         var dataPoint = [];
-        for (var i = -10; i < 10; i += 0.01) {
+        for (var i = -10; i < 10; i += 0.1) {
             //dataPoint.push(new Point(i,Math.sin(i)));
-            dataPoint.push(new Point(i, Math.sin(i) * i));
+            dataPoint.push(new Point(i, Math.sin(i) * Math.cos(i) * i));
             //dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
         }
 

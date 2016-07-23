@@ -24,20 +24,27 @@ knotSelectionMethodName) {
             qY.push(Q[i].y);
         }
 
-        var pX = math.lusolve(NTN, qX);
-        var pY = math.lusolve(NTN, qY);
+        try{
 
-        var controlPoints = [dataPoints[0]];
+            var pX = math.lusolve(NTN, qX);
+            var pY = math.lusolve(NTN, qY);
 
-        for (var j = 0; j < h-1; j++) {
-            controlPoints.push(new Point(pX[j][0],pY[j][0]));
+
+            var controlPoints = [dataPoints[0]];
+
+            for (var j = 0; j < h-1; j++) {
+                controlPoints.push(new Point(pX[j][0],pY[j][0]));
+            }
+
+            controlPoints.push(dataPoints[n]);
+
+            var error = computeErrors(controlPoints,knots,parameters);
+
+            return { cp: controlPoints, knots: knots, params : parameters,error:error,order:p };
         }
-
-        controlPoints.push(dataPoints[n]);
-
-        var error = computeErrors(controlPoints,knots,parameters);
-
-        return { cp: controlPoints, knots: knots, params : parameters,error:error,order:p };
+        catch(e){
+            return { cp: [], knots: [], params : [],error:"singular matrix",order:p };
+        }
 
     }
 

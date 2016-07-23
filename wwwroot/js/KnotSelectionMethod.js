@@ -55,14 +55,14 @@
         }
         */
 
-        var d = (n) / (h - p);
+        var d = (n + 1) / (h - p + 1);
 
         for (var i = 1; i <= h - p; i++) {
 
             var j = parseInt(i * d);
             var alpha = i * d - j;
 
-            knots.push(parameters[j - 1] + alpha * (parameters[j - 1] + parameters[j]));
+            knots.push(parameters[j- 1] + alpha * (parameters[j]-parameters[j - 1]));
         }
 
         for (var i = 0; i < p + 1; i++) {
