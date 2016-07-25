@@ -51,6 +51,7 @@ compressParameters) {
 
 
             var controlPoints = [dataPoints[0]];
+<<<<<<< HEAD
 
             for (var j = 0; j < h-1; j++) {
                 controlPoints.push(new Point(pX[j][0],pY[j][0]));
@@ -62,6 +63,18 @@ compressParameters) {
 
             return { cp: controlPoints, knots: knots
                 , params : parameters,error:error,order:p,compression:compressionResult};
+=======
+
+            for (var j = 0; j < h-1; j++) {
+                controlPoints.push(new Point(pX[j][0],pY[j][0]));
+            }
+
+            controlPoints.push(dataPoints[n]);
+
+            var error = computeErrors(controlPoints,knots,parameters);
+
+            return { cp: controlPoints, knots: knots, params : parameters,error:error,order:p };
+>>>>>>> 5d4079d32faa3bd606bac5b28688061c88de6fb6
         }
         catch(e){
             return { cp: [], knots: [], params : [],error:"singular matrix",order:p };

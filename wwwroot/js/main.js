@@ -203,6 +203,7 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
     errorPlotter.plot('result-canvas');
     $('#result-canvas').show();
 
+<<<<<<< HEAD
     var output='controlPoints:\n';
 
     for(var i=0;i<result.cp.length;i++){
@@ -221,6 +222,9 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
 
     //var blob = new Blob([JSON.stringify(result)], {type: "text/plain;charset=utf-8"});
     var blob = new Blob([output], {type: "text/plain;charset=utf-8"});
+=======
+    var blob = new Blob([JSON.stringify(result)], {type: "text/plain;charset=utf-8"});
+>>>>>>> 5d4079d32faa3bd606bac5b28688061c88de6fb6
     saveAs(blob,"Approximation Result.txt");
 }
 
