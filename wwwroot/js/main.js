@@ -11,6 +11,8 @@ var controlPanelViewModel = {
     noiseReductionAlgorithm: ko.observable(),
     file: ko.observable(),
     approximationType: ko.observable('non-iterative'),
+    compactApproximationParameters:ko.observable('yes'),
+    compactApproximationParametersQuality:ko.observable(16),
     approximationSettings: {
         initialNumberOfControlPoints: ko.observable(5),
         approximationEndCondition: ko.observable('iterationBounded'),
@@ -42,9 +44,9 @@ var controlPanelViewModel = {
 
         
         var dataPoint = [];
-        for (var i = -10; i < 10; i += 0.01) {
+        for (var i = -10; i < 10; i += 0.1) {
             //dataPoint.push(new Point(i,Math.sin(i)));
-            dataPoint.push(new Point(i, Math.sin(i) * i));
+            dataPoint.push(new Point(i, Math.sin(i) * Math.cos(i) * i));
             //dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
         }
 
@@ -148,7 +150,8 @@ function nonIterativeBSplineApproximation(jsonInput,dataPoints) {
         parseInt(controlPanelViewModel.order()),
         parseInt(controlPanelViewModel.numberOfControlPoints()) - 1,
         controlPanelViewModel.parameterSelection(),
-        controlPanelViewModel.knotSelection());
+        controlPanelViewModel.knotSelection(),
+        controlPanelViewModel.compactApproximationParameters() =='yes');
 
     var result = approximator.compute();
 
@@ -170,7 +173,9 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
         parseInt(controlPanelViewModel.order()),
         controlPanelViewModel.parameterSelection(),
         controlPanelViewModel.knotSelection(),
-        parseInt(controlPanelViewModel.approximationSettings.initialNumberOfControlPoints()));
+        parseInt(controlPanelViewModel.approximationSettings.initialNumberOfControlPoints()),
+        null,
+        controlPanelViewModel.compactApproximationParameters() =='yes');
 
     var endConditionValue = null;
     if (controlPanelViewModel.approximationSettings.approximationEndCondition() == 'errorBounded') {
@@ -197,6 +202,26 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
     var errorPlotter = new BSplineIterativeApproximationPlotter(approximator.results);
     errorPlotter.plot('result-canvas');
     $('#result-canvas').show();
+
+    var output='controlPoints:\n';
+
+    for(var i=0;i<result.cp.length;i++){
+        output+= result.cp[i].x +'\t'+ result.cp[i].y+'\n'
+    }
+
+    output+= 'knots:\n';
+    output+= result.knots + '\n';
+
+    if(controlPanelViewModel.compactApproximationParameters() =='yes'){
+            output+= 'compression_slices:\n';
+            output+= result.compression.rangeSlices + '\n';
+            output+= 'compression_parameters:\n';
+            output+= result.compression.compressedParameters + '\n';
+    }
+
+    //var blob = new Blob([JSON.stringify(result)], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([output], {type: "text/plain;charset=utf-8"});
+    saveAs(blob,"Approximation Result.txt");
 }
 
 function setResultPanel(result) {

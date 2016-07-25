@@ -1,6 +1,6 @@
 ﻿var BSplinePlotter = function(controlPoints,knots,p,dataPoints,noiseLessPoints) {
     
-    var bsplineOrder = p + 1;
+    var bsplineOrder = p ;
 
     var algorithm = new CoxDeboorAlgorithm(controlPoints, knots, bsplineOrder);
 

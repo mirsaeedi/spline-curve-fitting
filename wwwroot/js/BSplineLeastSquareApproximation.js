@@ -2,12 +2,32 @@
 p,
 h,
 parameterSelectionMethodName,
-knotSelectionMethodName) {
+knotSelectionMethodName,
+compressParameters) {
 
     var n = dataPoints.length - 1;
+    var parameters =[];
+    var knots =[];
 
-    var parameters = parameterSelectionMethods.getParameters(dataPoints,parameterSelectionMethodName);
-    var knots = knotVectorSelectionMethods.getKnots(dataPoints,p,h,parameters,knotSelectionMethodName);
+    if(parameterSelectionMethodName=='universal'){
+        h=dataPoints.length-1;
+        var result = parameterSelectionMethods.getParameters(dataPoints,p,h,parameterSelectionMethodName);
+        parameters=result.parameters;
+        knots=result.knots;
+    }
+    else{
+
+        parameters = parameterSelectionMethods.getParameters(dataPoints,p,h,parameterSelectionMethodName);
+        var compressionResult = null;
+    
+        if(compressParameters){
+            var compressor = new ParameterCompressor();
+            compressionResult = compressor.compress(20,parameters);
+            parameters=compressionResult.compressedParameters;
+        }
+
+        knots = knotVectorSelectionMethods.getKnots(dataPoints,p,h,parameters,knotSelectionMethodName);
+    }
 
     this.compute = function() {
 
@@ -24,20 +44,28 @@ knotSelectionMethodName) {
             qY.push(Q[i].y);
         }
 
-        var pX = math.lusolve(NTN, qX);
-        var pY = math.lusolve(NTN, qY);
+        try{
 
-        var controlPoints = [dataPoints[0]];
+            var pX = math.lusolve(NTN, qX);
+            var pY = math.lusolve(NTN, qY);
 
-        for (var j = 0; j < h-1; j++) {
-            controlPoints.push(new Point(pX[j][0],pY[j][0]));
+
+            var controlPoints = [dataPoints[0]];
+
+            for (var j = 0; j < h-1; j++) {
+                controlPoints.push(new Point(pX[j][0],pY[j][0]));
+            }
+
+            controlPoints.push(dataPoints[n]);
+
+            var error = computeErrors(controlPoints,knots,parameters);
+
+            return { cp: controlPoints, knots: knots
+                , params : parameters,error:error,order:p,compression:compressionResult};
         }
-
-        controlPoints.push(dataPoints[n]);
-
-        var error = computeErrors(controlPoints,knots,parameters);
-
-        return { cp: controlPoints, knots: knots, params : parameters,error:error,order:p };
+        catch(e){
+            return { cp: [], knots: [], params : [],error:"singular matrix",order:p };
+        }
 
     }
 
@@ -51,7 +79,7 @@ knotSelectionMethodName) {
             totalLeastSquareDistance: 0
         };
 
-        var algorithm = new CoxDeboorAlgorithm(controlPoints, knots, p + 1);
+        var algorithm = new CoxDeboorAlgorithm(controlPoints, knots, p);
 
         for (var i = 1; i < parameters.length-1; i++) {
 
@@ -106,8 +134,8 @@ knotSelectionMethodName) {
         var basisZero = basisFunction.compute(parameters[k], 0, p);
         var basisH = basisFunction.compute(parameters[k], h, p);
 
-        var x = dataPoints[k].x
-            - basisZero * dataPoints[0].x - basisH * dataPoints[n].x;
+        var x = math.bignumber(dataPoints[k].x).minus(
+            basisZero.times(math.bignumber(dataPoints[0].x).minus(basisH.times(math.bignumber(dataPoints[n].x));
 
         var y = dataPoints[k].y
             - basisZero * dataPoints[0].y - basisH * dataPoints[n].y;

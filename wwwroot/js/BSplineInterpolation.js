@@ -5,7 +5,7 @@ knotSelectionMethodName) {
 
     var n = dataPoints.length - 1;
     
-    var parameters = parameterSelectionMethods.getParameters(dataPoints,parameterSelectionMethodName);
+    var parameters = parameterSelectionMethods.getParameters(dataPoints,p,n,parameterSelectionMethodName);
     var knots = knotVectorSelectionMethods.getKnots(dataPoints,p,n,parameters,knotSelectionMethodName);
 
     this.compute = function() {

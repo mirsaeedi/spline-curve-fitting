@@ -1,7 +1,47 @@
 ﻿var CoxDeboorAlgorithm = function(controlPoints, knots, bsplineOrder) {
 
-    var memoization = null;
+    //var bsplineOrder=bsplineOrder+1;
 
+
+
+    this.compute = function(t) {
+
+        var indexOfRange = findRangeIndex(t);
+
+        var d=[];
+
+        for(var i=0;i<=bsplineOrder;i++){
+            
+            var downIndex = indexOfRange-bsplineOrder+i;
+
+            if (downIndex > -1 && downIndex < controlPoints.length)
+               d.push(controlPoints[downIndex]);
+            else
+                d.push( new Point(0, 0));
+        }
+                    
+
+        for (var r = 1; r <= bsplineOrder; r++) {
+            
+            for (var i = indexOfRange - bsplineOrder + r; i <=indexOfRange; i++) {
+                
+                var alpha = (t-knots[i])/( knots[i+bsplineOrder-r+1] - knots[i])
+                
+                var x = d[i - (indexOfRange - bsplineOrder + r)].x * (1-alpha) 
+                +d[i - (indexOfRange - bsplineOrder + r) + 1].x * alpha;
+
+                var y = d[i - (indexOfRange - bsplineOrder + r)].y * (1-alpha) 
+                +d[i - (indexOfRange - bsplineOrder + r) + 1].y * alpha;
+
+                d[i - (indexOfRange - bsplineOrder + r)]=new Point(x,y);
+            }
+        }
+
+        return d[0];
+    }
+    /*
+    var memoization = null;
+    
     this.compute = function(t) {
 
         var rangeIndex = findRangeIndex(t);
@@ -57,9 +97,10 @@
 
         return (t - knots[i]) / (knots[i - j + bsplineOrder] - knots[i]);
 
-    }
+    }*/
+    
 
-    var findRangeIndex = function(t) {
+        var findRangeIndex = function(t) {
 
         for (var i = 1; i < knots.length; i++) {
 
@@ -67,5 +108,4 @@
                 return i - 1;
         }
     }
-
 }

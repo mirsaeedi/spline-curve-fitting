@@ -165,7 +165,9 @@
                                     <select class="form-control" data-bind="value:parameterSelection">
                                         <option value="uniformly-spaced">Uniformly Spaced</option>
                                         <option value="chord-length">Chord Length</option>
+                                        <option value="x-length">X Length</option>
                                         <option value="centripetal">Centripetal</option>
+                                        <option value="universal">Universal</option>
                                     </select>
                                 </div>
                             </div>
@@ -226,6 +228,18 @@
                                         Tolerance
                                     </label>
                                     <input data-bind="value:tolerance" type="number" class="form-control" value="" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline' && fittingMode()=='approximation'">
+                                <div class="form-group">
+                                    <label class="">
+                                        Compress Paramters
+                                    </label>
+                                    <select class="form-control" data-bind="value:compactApproximationParameters">
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -347,6 +361,9 @@
     <script src="./wwwroot/lib/knockout/dist/knockout.js"></script>
     <script src="./wwwroot/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./wwwroot/lib/plotly.js/dist/plotly.min.js"></script>
+    <script src="./wwwroot/lib/FileSaver.js/FileSaver.min.js"></script>
+    <script src="./wwwroot/lib/bignumber.js/bignumber.min.js"></script>
+    
 
     <script src="./wwwroot/js/BezierPlotter.js"></script>
     <script src="./wwwroot/js/DeCasteljauAlgorithm.js"></script>
@@ -364,6 +381,7 @@
     <script src="./wwwroot/js/RamerDouglasPeuckerAlgorithm.js"></script>
     <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
+    <script src="./wwwroot/js/ParameterCompressor.js"></script>
 
     <script src="./wwwroot/js/main.js"></script>
 

@@ -3,7 +3,8 @@ p,
 parameterSelectionMethodName,
 knotSelectionMethodName,
 initialNumberOfControlPoints,
-useKnotHueristics) {
+useKnotHueristics,
+compressParameters) {
 
     var self=this;
 
@@ -25,9 +26,13 @@ useKnotHueristics) {
                     p,
                     i - 1,
                     parameterSelectionMethodName,
-                    knotSelectionMethodName);
+                    knotSelectionMethodName,
+                    compressParameters);
 
                     var result = approximator.compute();
+
+                    if(result.error=="singular matrix")
+                        continue;
 
                     self.results.push(result);
                         
@@ -57,7 +62,8 @@ useKnotHueristics) {
                     p,
                     i - 1,
                     parameterSelectionMethodName,
-                    knotSelectionMethodName);
+                    knotSelectionMethodName,
+                    compressParameters);
 
                 var result = approximator.compute();
 
