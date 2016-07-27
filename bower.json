@@ -11,10 +11,8 @@
     "knockout": "3.4.0",
     "plotly.js": "*",
     "FileSaver.js":"latest",
-<<<<<<< HEAD
     "bignumber.js":"latest",
-=======
->>>>>>> 5d4079d32faa3bd606bac5b28688061c88de6fb6
+    "algebra.js":"latest",
     "mathjs": "*"
   },
   "license": "MIT",

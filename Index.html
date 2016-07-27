@@ -44,63 +44,50 @@
 
             <div class="col-md-12" id="controlPanel">
 
-<div class="modal fade" tabindex="-1" role="dialog" id="approximationModal">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Approximation Settings</h4>
-                </div>
-
-                <div class="modal-body" data-bind="with:approximationSettings">
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="">Initial Number Of Control Points</label>
-                                <input type="number" class="form-control" data-bind="value:initialNumberOfControlPoints">
+                <div class="modal fade" tabindex="-1" role="dialog" id="approximationModal">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Approximation Settings</h4>
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="checkbox" data-bind="checked:useKnotHueristics">
-                                <label class="">Use Knot Placement Hueristics</label>
+                            <div class="modal-body" data-bind="with:approximationSettings">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="">Initial Number Of Control Points</label>
+                                            <input type="number" class="form-control" data-bind="value:initialNumberOfControlPoints">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="radio" name="approximationEndCondition" value="error-bounded" data-bind="checked:approximationEndCondition">
+                                            <label class="">Reach Max Error</label>
+                                            <input type="number" class="form-control" data-bind="disable:approximationEndCondition()!='error-bounded',value:'error-bounded'">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="radio" name="approximationEndCondition" value="iteration-bounded" data-bind="checked:approximationEndCondition">
+                                            <label class="">Max Number Of Control Points</label>
+                                            <input type="number" class="form-control" data-bind="disable:approximationEndCondition()!='iteration-bounded',value:maxNumberOfControlPoints">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="radio" name="approximationEndCondition" value="errorBounded"
-                                data-bind="checked:approximationEndCondition">
-                                <label class="">Reach Max Error</label>
-                                <input type="number" class="form-control"
-                                 data-bind="disable:approximationEndCondition()!='errorBounded',value:errorBound">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="radio" name="approximationEndCondition" value="iterationBounded"
-                                data-bind="checked:approximationEndCondition">
-                                <label class="">Max Number Of Control Points</label>
-                                <input type="number" class="form-control"
-                                 data-bind="disable:approximationEndCondition()!='iterationBounded',value:maxNumberOfControlPoints">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
                 <div class="panel panel-primary">
 
@@ -324,9 +311,20 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                              <div id="result-canvas"></div>
+                                <div id="error-canvas"></div>
                             </div>
                         </div>
+
+                        <hr>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="iterative-approximation-canvas"></div>
+                            </div>
+                        </div>
+
+
 
                     </div>
 
@@ -362,29 +360,32 @@
     <script src="./wwwroot/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="./wwwroot/lib/plotly.js/dist/plotly.min.js"></script>
     <script src="./wwwroot/lib/FileSaver.js/FileSaver.min.js"></script>
-<<<<<<< HEAD
     <script src="./wwwroot/lib/bignumber.js/bignumber.min.js"></script>
-    
-=======
->>>>>>> 5d4079d32faa3bd606bac5b28688061c88de6fb6
+    <script src="./wwwroot/lib/algebra.js/algebra.min.js"></script>
+    <script src="./wwwroot/lib/nerdamer/nerdamer.core.js"></script>
+    <script src="./wwwroot/lib/nerdamer/algebra.js"></script>
+    <script src="./wwwroot/lib/nerdamer/solve.js"></script>
+    <script src="./wwwroot/lib/nerdamer/calculus.js"></script>
 
-    <script src="./wwwroot/js/BezierPlotter.js"></script>
-    <script src="./wwwroot/js/DeCasteljauAlgorithm.js"></script>
+    <script src="./wwwroot/js/Bezier/BezierPlotter.js"></script>
+    <script src="./wwwroot/js/Bezier/DeCasteljauAlgorithm.js"></script>
 
-    <script src="./wwwroot/js/PlotDrawer.js"></script>
-    <script src="./wwwroot/js/BSplinePlotter.js"></script>
-    <script src="./wwwroot/js/Point.js"></script>
-    <script src="./wwwroot/js/ParameterSelectionMethods.js"></script>
-    <script src="./wwwroot/js/BsplineCoxDeboorAlgorithm.js"></script>
-    <script src="./wwwroot/js/BasisFunction.js"></script>
-    <script src="./wwwroot/js/BSplineLeastSquareApproximation.js"></script>
-    <script src="./wwwroot/js/BSplineIterativeApproximation.js"></script>
-    <script src="./wwwroot/js/BSplineIterativeApproximationPlotter.js"></script>
-    <script src="./wwwroot/js/BSplineInterpolation.js"></script>
-    <script src="./wwwroot/js/RamerDouglasPeuckerAlgorithm.js"></script>
-    <script src="./wwwroot/js/KnotSelectionMethod.js"></script>
     <script src="./wwwroot/js/InputReader.js"></script>
-    <script src="./wwwroot/js/ParameterCompressor.js"></script>
+    <script src="./wwwroot/js/PlotDrawer.js"></script>
+    <script src="./wwwroot/js/RamerDouglasPeuckerAlgorithm.js"></script>
+    <script src="./wwwroot/js/Point.js"></script>
+
+    <script src="./wwwroot/js/bspline/BasisFunction.js"></script>
+    <script src="./wwwroot/js/bspline/BSpline.js"></script>
+    <script src="./wwwroot/js/bspline/BSplineBuilder.js"></script>
+    <script src="./wwwroot/js/bspline/BSplineIterativeApproximationPlotter.js"></script>
+    <script src="./wwwroot/js/bspline/BSplinePlotter.js"></script>
+    <script src="./wwwroot/js/bspline/CompressionStrategy.js"></script>
+    <script src="./wwwroot/js/bspline/FittingStrategy.js"></script>
+    <script src="./wwwroot/js/bspline/IterativeApproximationStrategy.js"></script>
+    <script src="./wwwroot/js/bspline/knotSelectionStrategies.js"></script>
+    <script src="./wwwroot/js/bspline/ParameterSelectionStrategies.js"></script>
+    <script src="./wwwroot/js/bspline/ParameterCompressor.js"></script>
 
     <script src="./wwwroot/js/main.js"></script>
 

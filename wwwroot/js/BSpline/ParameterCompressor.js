@@ -1,11 +1,13 @@
-var ParameterCompressor =  function(){
+var ParameterCompressor =  function(compressionStrategy){
 
-    this.compress=function (quality,params) {
+    this.compress=function (params) {
         
-        var sliceLength = quality*64 + 1;
+        var sliceLength = compressionStrategy.getQuality()*compressionStrategy.getBitLength() + 1;
+        
         var compressedParameters = [0];
 
         var rangeSlices = []
+
         for(var i=0;i<sliceLength;i++)
                 rangeSlices.push(0);
 
