@@ -27,7 +27,7 @@
 
     }
 
-    self.DeboorAverageApproximationStrategy = function () {
+    self.DeboorAverageApproximationStrategy = function (fittingMode) {
 
         this.getKnots = function (p, h, parameters) {
 
@@ -39,14 +39,26 @@
                 knots.push(0);
             }
 
-            var d = (n + 1) / (h - p + 1);
+            if (fittingMode == 'interpolation') {
 
-            for (var i = 1; i <= h - p; i++) {
+                for (var j = 1; j <= h - p; j++) {
+                    var sum = 0;
+                    for (var i = j; i <= j + p - 1; i++) {
+                        sum += parameters[i];
+                    }
+                    knots.push(sum / p);
+                }
+            } else if (fittingMode == 'approximation') {
 
-                var j = parseInt(i * d);
-                var alpha = i * d - j;
+                var d = (n + 1) / (h - p + 1);
 
-                knots.push(parameters[j - 1] + alpha * (parameters[j] - parameters[j - 1]));
+                for (var i = 1; i <= h - p; i++) {
+
+                    var j = parseInt(i * d);
+                    var alpha = i * d - j;
+
+                    knots.push(parameters[j - 1] + alpha * (parameters[j] - parameters[j - 1]));
+                }
             }
 
             for (var i = 0; i < p + 1; i++) {

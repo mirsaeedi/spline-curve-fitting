@@ -16,7 +16,7 @@ var controlPanelViewModel = {
     compactApproximationBitLength:ko.observable(32),
     approximationSettings: {
         initialNumberOfControlPoints: ko.observable(5),
-        approximationEndCondition: ko.observable('iterationBounded'),
+        approximationEndCondition: ko.observable('iteration-bounded'),
         errorBound: ko.observable(0.5),
         maxNumberOfControlPoints: ko.observable(100),
     },
@@ -118,7 +118,7 @@ function bsplineInterpolation(jsonInput,dataPoints) {
 
     setResultPanel(interpolationResult);
 
-    var plotter = new BSplinePlotter(bspline,
+    var plotter = new BSplinePlotter(interpolationResult.bspline,
         jsonInput.dataPoints,
         dataPoints);
 
@@ -212,19 +212,22 @@ function getFittingStrategy(){
 
     if(controlPanelViewModel.parameterSelection()=='chord-length')
         parameterSelectionStrategy = new ParameterSelectionStrategies.ChordLengthStrategy();
-    if(controlPanelViewModel.parameterSelection()=='centripetal')
+    else if(controlPanelViewModel.parameterSelection()=='centripetal')
         parameterSelectionStrategy = new ParameterSelectionStrategies.CentripetalStrategy();
-    if(controlPanelViewModel.parameterSelection()=='x-length')
+    else if(controlPanelViewModel.parameterSelection()=='x-length')
         parameterSelectionStrategy = new ParameterSelectionStrategies.XLengthStrategy();
-    if(controlPanelViewModel.parameterSelection()=='uniformly-spaced')
+    else if(controlPanelViewModel.parameterSelection()=='uniformly-spaced')
         parameterSelectionStrategy = new ParameterSelectionStrategies.UniformlySpacedStrategy();
-    if(controlPanelViewModel.parameterSelection()=='universal')
+    else if(controlPanelViewModel.parameterSelection()=='universal')
         parameterSelectionStrategy = new ParameterSelectionStrategies.UniversalStrategy();
 
     if(controlPanelViewModel.knotSelection()=='uniformly-spaced')
         knotSelectionStrategy = new KnotSelectionStrategies.UniformlySpacedStrategy();
-    if(controlPanelViewModel.knotSelection()=='deboor-average')
-        knotSelectionStrategy = new KnotSelectionStrategies.DeboorAverageApproximationStrategy();
+    else if(controlPanelViewModel.knotSelection()=='deboor-average')
+        knotSelectionStrategy = new KnotSelectionStrategies.DeboorAverageApproximationStrategy(controlPanelViewModel.fittingMode());
+
+    if(controlPanelViewModel.parameterSelection()=='universal')
+        knotSelectionStrategy = null;
 
     if(controlPanelViewModel.compactApproximationParameters()=='yes'){
         compressionStrategy = new CompressionStrategy(controlPanelViewModel.compactApproximationParametersQuality(),
@@ -242,7 +245,7 @@ function getIterativeApproximationStrategy(){
     var iterativeApproximationStrategy = 
         new IterativeApproximationStrategy(controlPanelViewModel.approximationSettings.initialNumberOfControlPoints(),
         controlPanelViewModel.approximationSettings.approximationEndCondition(),
-        controlPanelViewModel.approximationSettings.approximationEndCondition()=='error-bound'
+        controlPanelViewModel.approximationSettings.approximationEndCondition()=='error-bounded'
         ?controlPanelViewModel.approximationSettings.errorBound()
         :controlPanelViewModel.approximationSettings.maxNumberOfControlPoints());
 

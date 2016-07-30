@@ -70,7 +70,7 @@
                                         <div class="form-group">
                                             <input type="radio" name="approximationEndCondition" value="error-bounded" data-bind="checked:approximationEndCondition">
                                             <label class="">Reach Max Error</label>
-                                            <input type="number" class="form-control" data-bind="disable:approximationEndCondition()!='error-bounded',value:'error-bounded'">
+                                            <input type="number" class="form-control" data-bind="disable:approximationEndCondition()!='error-bounded',value:errorBound">
                                         </div>
                                     </div>
                                     <div class="col-md-12">
@@ -368,7 +368,7 @@
     <script src="./wwwroot/lib/nerdamer/calculus.js"></script>
 
     <script src="./wwwroot/js/Bezier/BezierPlotter.js"></script>
-    <script src="./wwwroot/js/Bezier/DeCasteljauAlgorithm.js"></script>
+    <script src="./wwwroot/js/Bezier/Bezier.js"></script>
 
     <script src="./wwwroot/js/InputReader.js"></script>
     <script src="./wwwroot/js/PlotDrawer.js"></script>

@@ -34,7 +34,7 @@ var ParameterSelectionStrategies = (function () {
 
     self.CentripetalStrategy = function () {
 
-        this.getParameters = function (dataPoints, a) {
+        this.getParameters = function (dataPoints, a,p) {
 
             var parameters = [0];
 
@@ -94,7 +94,7 @@ var ParameterSelectionStrategies = (function () {
 
     self.UniformlySpacedStrategy = function () {
 
-        this.getParameters = function (dataPoints) {
+        this.getParameters = function (dataPoints,a,p) {
 
             var parameters = [];
             var n = dataPoints.length - 1;
@@ -113,27 +113,33 @@ var ParameterSelectionStrategies = (function () {
     self.UniversalStrategy = function () {
 
         var knots = null;
+        var self=this;
 
-        this.getKnots = function () {
+        this.getKnots = function (p, h) {
+
+            if(!knots){
+                knots = new KnotSelectionStrategies
+                .UniformlySpacedStrategy()
+                .getKnots(p,h);
+            }
+
             return knots;
         }
 
-        this.getParameters = function (dataPoints, p) {
+        this.getParameters = function (dataPoints,a, p) {
 
-            var parameters = [];
+            var parameters = [0];
 
-            knots = new knotSelectionStrategies
-                .UniformlySpacedStrategy(p, dataPoints.length - 1)
-                .getKnots();
+            knots = self.getKnots(p, dataPoints.length - 1);
 
             var basisFunction = new BasisFunction(knots);
             var value = 0;
 
-            for (var i = 0; i < dataPoints.length; i++) {
+            for (var i = 1; i < dataPoints.length-1; i++) {
 
                 var max = -1;
 
-                for (var t = 0; t <= 1; t += 1 / 100) {
+                for (var t = 0; t <= 1; t += 0.01) {
                     value = basisFunction.compute(t, i, p);
                     if (value > max) {
                         max = value;
@@ -141,6 +147,8 @@ var ParameterSelectionStrategies = (function () {
                     }
                 }
             }
+
+            parameters.push(1);
 
             return parameters;
         }

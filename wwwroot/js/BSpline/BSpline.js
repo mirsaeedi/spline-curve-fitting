@@ -205,7 +205,6 @@ var BSpline = function (order, controlPoints, knots) {
         return d[0];
     }
 
-
     var findRangeIndex = function (t) {
 
         for (var i = 0; i < knots.length; i++) {

@@ -2,13 +2,15 @@ var FittingStrategy = function (parameterSelectionStrategy, knotSelectionStrateg
 
     this.getParameters = function (dataPoints, a, p) {
 
+        var parameters = parameterSelectionStrategy.getParameters(dataPoints, a, p);
+
         if (compressionStrategy) {
             var compressor = new ParameterCompressor(compressionStrategy);
             compressionResult = compressor.compress(parameters);
             parameters = compressionResult.compressedParameters;
         }
 
-        return parameterSelectionStrategy.getParameters(dataPoints, a, p);
+        return parameters;
     }
 
     this.getKnots = function (order, h, parameters) {

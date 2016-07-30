@@ -8,7 +8,7 @@ var BSplineBuilder = (function () {
 
     self.interpolate = function (dataPoints, order, fittingStrategy) {
 
-        var parameters = fittingStrategy.getParameters();
+        var parameters = fittingStrategy.getParameters(dataPoints, 0.5,order);
         var knots = fittingStrategy.getKnots(order, dataPoints.length - 1, parameters);
         return Interpolator.interpolate(dataPoints, order, parameters, knots);
 
@@ -17,7 +17,7 @@ var BSplineBuilder = (function () {
     self.approximate = function (dataPoints, order, numberOfControlPoints, fittingStrategy) {
 
         var h = numberOfControlPoints - 1;
-        var parameters = fittingStrategy.getParameters(dataPoints,0.5);
+        var parameters = fittingStrategy.getParameters(dataPoints, 0.5,order);
         var knots = fittingStrategy.getKnots(order, h, parameters);
         return Approximator.approximate(dataPoints, order, h, parameters, knots);
     };
@@ -36,7 +36,8 @@ var BSplineBuilder = (function () {
 
         self.interpolate = function (dataPoints, p, parameters, knots) {
 
-            var N = computeN(dataPoints.length - 1, p, parameters, knots);
+            var n = dataPoints.length - 1;
+            var N = computeN(n, p, parameters, knots);
             var dX = [], dY = [];
 
             for (var i = 0; i <= n; i++) {
@@ -78,6 +79,8 @@ var BSplineBuilder = (function () {
             return N;
         }
 
+        return self;
+
     })();
 
     var Approximator = (function () {
@@ -87,7 +90,7 @@ var BSplineBuilder = (function () {
         self.approximate = function (dataPoints, p, h, parameters, knots) {
 
             var n = dataPoints.length - 1;
-            var Q = computeQ(dataPoints,n, p, h, parameters, knots);
+            var Q = computeQ(dataPoints, n, p, h, parameters, knots);
             var N = computeN(n, p, h, parameters, knots);
 
             var NT = math.transpose(N);
@@ -101,32 +104,34 @@ var BSplineBuilder = (function () {
                 qY.push(Q[i].y);
             }
 
+            var pX = null;
+            var pY = null;
+
             try {
 
-                var pX = math.lusolve(NTN, qX);
-                var pY = math.lusolve(NTN, qY);
-
-                var controlPoints = [dataPoints[0]];
-
-                for (var j = 0; j < h - 1; j++) {
-                    controlPoints.push(new Point(pX[j][0], pY[j][0]));
-                }
-
-                controlPoints.push(dataPoints[n]);
-
-                var bspline = BSplineBuilder.build(p, controlPoints, knots);
-
-                var error = computeErrors(bspline,dataPoints, parameters);
-
-                return { bspline: bspline, params: parameters, error: error };
+                pX = math.lusolve(NTN, qX);
+                pY = math.lusolve(NTN, qY);
             }
             catch (e) {
                 return { cp: [], knots: [], params: [], error: "singular matrix", order: p };
             }
 
+            var controlPoints = [dataPoints[0]];
+
+            for (var j = 0; j < h - 1; j++) {
+                controlPoints.push(new Point(pX[j][0], pY[j][0]));
+            }
+
+            controlPoints.push(dataPoints[n]);
+
+            var bspline = BSplineBuilder.build(p, controlPoints, knots);
+
+            var error = computeErrors(bspline, dataPoints, parameters);
+
+            return { bspline: bspline, params: parameters, error: error };
         }
 
-        function computeErrors(bspline,dataPoints, parameters) {
+        function computeErrors(bspline, dataPoints, parameters) {
 
             var result = {
                 distances: [],
@@ -159,7 +164,7 @@ var BSplineBuilder = (function () {
             return result;
         }
 
-        function computeQ(dataPoints,n, p, h, parameters, knots) {
+        function computeQ(dataPoints, n, p, h, parameters, knots) {
 
             var Q = [];
 
@@ -173,7 +178,7 @@ var BSplineBuilder = (function () {
                 for (var k = 1; k < n; k++) {
 
                     var basis = basisFunction.compute(parameters[k], i, p);
-                    var qK = computeqk(k,dataPoints,n, p, h, parameters, knots);
+                    var qK = computeqk(k, dataPoints, n, p, h, parameters, knots);
                     sumX += basis * qK.x;
                     sumY += basis * qK.y;
                 }
@@ -184,7 +189,7 @@ var BSplineBuilder = (function () {
             return Q;
         }
 
-        function computeqk(k,dataPoints,n, p, h, parameters, knots) {
+        function computeqk(k, dataPoints, n, p, h, parameters, knots) {
 
             var basisFunction = new BasisFunction(knots);
             var basisZero = basisFunction.compute(parameters[k], 0, p);
@@ -231,9 +236,9 @@ var BSplineBuilder = (function () {
             if (iterativeApproximationStrategy.getEndConditionType() == 'error-bounded') {
 
                 return iterate(dataPoints, p, h, fittingStrategy, iterativeApproximationStrategy,
-                function(i,distance){
-                    return distance>iterativeApproximationStrategy.getEndConditionValue();
-                });
+                    function (i, distance) {
+                        return distance > iterativeApproximationStrategy.getEndConditionValue();
+                    });
             }
             if (iterativeApproximationStrategy.getEndConditionType() == 'iteration-bounded') {
 
@@ -246,9 +251,9 @@ var BSplineBuilder = (function () {
 
         }
 
-        var iterate = function (dataPoints, p, h, fittingStrategy, iterativeApproximationStrategy,iterateCondition) {
+        var iterate = function (dataPoints, p, h, fittingStrategy, iterativeApproximationStrategy, iterateCondition) {
 
-            var result = {approximations:[],bestApproximation:null};
+            var result = { approximations: [], bestApproximation: null };
 
             var n = dataPoints.length - 1;
 
@@ -262,13 +267,12 @@ var BSplineBuilder = (function () {
 
                 result.approximations.push(approximation);
 
-                if (result.bestApproximation == null) 
+                if (result.bestApproximation == null)
                     result.bestApproximation = approximation;
-                
-                if (result.bestApproximation.error.maxDistance > approximation.error.maxDistance)
+                else if (result.bestApproximation.error.maxDistance > approximation.error.maxDistance)
                     result.bestApproximation = approximation;
 
-                if(!iterateCondition(i,approximation.error.maxDistance))
+                if (!iterateCondition(i, approximation.error.maxDistance))
                     return result;
             }
 

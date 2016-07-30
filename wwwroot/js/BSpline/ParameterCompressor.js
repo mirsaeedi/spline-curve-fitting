@@ -15,7 +15,7 @@ var ParameterCompressor =  function(compressionStrategy){
 
         for(var i=1;i<params.length-1;i++){
 
-            for(var j= lastSlice;j < sliceLength;){
+            for(;lastSlice < sliceLength;){
 
                     if(lastSlice==sliceLength-1){
                         for(k=lastSlice;k>0;k--){

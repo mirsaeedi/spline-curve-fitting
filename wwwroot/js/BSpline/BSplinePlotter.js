@@ -39,7 +39,7 @@
             .parent()).width(), $(window).height() * 1.5);
 
         var curvePoints = [];
-
+/*
         curvePoints.push(dataPoints[0]);
         for (var i = dataPoints[1].x; i < dataPoints[dataPoints.length-1].x; i+=0.1) {
 
@@ -54,15 +54,15 @@
             }
 
         }
-        curvePoints.push(dataPoints[dataPoints.length-1]);
+        curvePoints.push(dataPoints[dataPoints.length-1]);*/
 
-        /*
+        
         for (var i = 0; i < 1; i += 0.001) {
 
             var point = bspline.deboorEvaluation(i);
             curvePoints.push(point);
 
-        }*/
+        }
 
         plotDrawer.draw(curvePoints,
             {},

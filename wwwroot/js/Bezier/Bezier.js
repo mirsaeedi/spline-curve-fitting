@@ -1,4 +1,4 @@
-var DeCasteljauAlgorithm = function(controlPoints){
+var Bezier = function(controlPoints){
 
     this.compute = function(t){
 
