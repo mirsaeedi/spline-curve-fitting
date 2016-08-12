@@ -11,9 +11,9 @@ var controlPanelViewModel = {
     noiseReductionAlgorithm: ko.observable(),
     file: ko.observable(),
     approximationType: ko.observable('non-iterative'),
-    compactApproximationParameters:ko.observable('no'),
-    compactApproximationParametersQuality:ko.observable(16),
-    compactApproximationBitLength:ko.observable(32),
+    compactApproximationParameters: ko.observable('no'),
+    compactApproximationParametersQuality: ko.observable(16),
+    compactApproximationBitLength: ko.observable(32),
     approximationSettings: {
         initialNumberOfControlPoints: ko.observable(5),
         approximationEndCondition: ko.observable('iteration-bounded'),
@@ -21,17 +21,6 @@ var controlPanelViewModel = {
         maxNumberOfControlPoints: ko.observable(100),
     },
     plot: function () {
-        
-        /*        
-        var dataPoint = [];
-        for (var i = -10; i < 10; i += 0.1) {
-            //dataPoint.push(new Point(i,Math.sin(i)));
-            dataPoint.push(new Point(i, Math.sin(i) * Math.cos(i) * i));
-            //dataPoint.push(new Point(i,i*i + 3*i + math.sin(i)));
-        }
-
-        plot({ dataPoints: dataPoint });*/
-
         InputReader.read($('#file')[0].files[0], plot);
     }
 }
@@ -59,15 +48,15 @@ function plot(jsonInput) {
 
         if (controlPanelViewModel.fittingMode() == 'approximation') {
             if (controlPanelViewModel.approximationType() == 'non-iterative')
-                nonIterativeBSplineApproximation(jsonInput,dataPoints);
-            else if (controlPanelViewModel.approximationType() == 'iterative'){
+                nonIterativeBSplineApproximation(jsonInput, dataPoints);
+            else if (controlPanelViewModel.approximationType() == 'iterative') {
                 $('#iterative-approximation-canvas').show();
-                iterativeBSplineApproximation(jsonInput,dataPoints);
+                iterativeBSplineApproximation(jsonInput, dataPoints);
             }
-                
+
         }
         else if (controlPanelViewModel.fittingMode() == 'interpolation')
-            bsplineInterpolation(jsonInput,dataPoints);
+            bsplineInterpolation(jsonInput, dataPoints);
         else if (controlPanelViewModel.fittingMode() == 'controlPoints')
             bsplineControlPoints(jsonInput);
 
@@ -76,6 +65,13 @@ function plot(jsonInput) {
 
         if (controlPanelViewModel.fittingMode() == 'controlPoints')
             bezierControlPoints(jsonInput);
+    }else{
+
+        if (controlPanelViewModel.spline() == 'piecewiseApproximation') {
+
+            var segments = getSegments();
+            piecewiseApproximation(dataPoints,segments);
+        }
     }
 }
 
@@ -101,7 +97,7 @@ function bezierControlPoints(jsonInput) {
 
 function bsplineControlPoints(jsonInput) {
 
-    var bspline = BSplineBuilder.build(jsonInput.order,jsonInput.controlPoints,
+    var bspline = BSplineBuilder.build(jsonInput.order, jsonInput.controlPoints,
         jsonInput.knots);
 
     var plotter = new BSplinePlotter(bspline);
@@ -109,12 +105,12 @@ function bsplineControlPoints(jsonInput) {
     plotter.plot();
 }
 
-function bsplineInterpolation(jsonInput,dataPoints) {
+function bsplineInterpolation(jsonInput, dataPoints) {
 
     var fittingStrategy = getFittingStrategy();
 
     var interpolationResult = BSplineBuilder.interpolate(dataPoints,
-        parseInt(controlPanelViewModel.order()),fittingStrategy);
+        parseInt(controlPanelViewModel.order()), fittingStrategy);
 
     setResultPanel(interpolationResult);
 
@@ -125,7 +121,7 @@ function bsplineInterpolation(jsonInput,dataPoints) {
     plotter.plot();
 }
 
-function nonIterativeBSplineApproximation(jsonInput,dataPoints) {
+function nonIterativeBSplineApproximation(jsonInput, dataPoints) {
 
     var fittingStrategy = getFittingStrategy();
 
@@ -145,7 +141,7 @@ function nonIterativeBSplineApproximation(jsonInput,dataPoints) {
 
 }
 
-function iterativeBSplineApproximation(jsonInput,dataPoints) {
+function iterativeBSplineApproximation(jsonInput, dataPoints) {
 
     var fittingStrategy = getFittingStrategy();
     var iterativeApproximationStrategy = getIterativeApproximationStrategy();
@@ -153,7 +149,7 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
     var approximationResult = BSplineBuilder.iterativeAproximate(dataPoints,
         parseInt(controlPanelViewModel.order()),
         parseInt(controlPanelViewModel.numberOfControlPoints()),
-        fittingStrategy,iterativeApproximationStrategy);
+        fittingStrategy, iterativeApproximationStrategy);
 
     setResultPanel(approximationResult.bestApproximation);
 
@@ -167,25 +163,90 @@ function iterativeBSplineApproximation(jsonInput,dataPoints) {
     var errorPlotter = new BSplineIterativeApproximationPlotter(approximationResult);
     errorPlotter.plot('iterative-approximation-canvas');
 
-    var output='controlPoints:\n';
+    outputIterativeApproximationResult(approximationResult);
+}
 
-    for(var i=0;i<result.cp.length;i++){
-        output+= result.cp[i].x +'\t'+ result.cp[i].y+'\n'
+function piecewiseApproximation(dataPoints,segments){
+
+    var approximator = new PiecewiseApproximator(segments,dataPoints);
+    var result = approximator.approximate();
+    
+    var plotter = new PiecewisePlotter(
+        segments,
+        dataPoints);
+
+    plotter.plot();
+
+        resultViewModel.minDistance(result.error.minDistance.toFixed(4));
+        resultViewModel.maxDistance(result.error.maxDistance.toFixed(4));
+        resultViewModel.avgDistance(result.error.avgDistance.toFixed(4));
+
+    var output='Piecewise Curve Fitting Result: \n';
+
+    for(var i=0;i<segments.length;i++){
+
+        output+='segment['+(i+1)+'] Parameters=' + segments[i].func.parameters +'\n';
+
+        if(segments[i].transient){
+            output+='segment['+(i+1)+'] Transient Parameters=' + segments[i].transient.func.parameters +'\n';
+        }
+
     }
 
-    output+= 'knots:\n';
-    output+= result.knots + '\n';
+    var blob = new Blob([output], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "Approximation Result.txt");
+}
 
-    if(controlPanelViewModel.compactApproximationParameters() =='yes'){
-            output+= 'compression_slices:\n';
-            output+= result.compression.rangeSlices + '\n';
-            output+= 'compression_parameters:\n';
-            output+= result.compression.compressedParameters + '\n';
+function polynomialFunctionApproximation(func,order,jsonInput, dataPoints){
+
+    var approximator = new LeastSquareApproximation(func,order,dataPoints);
+    var polynomial = approximator.approximate();
+
+    var plotter = new PolynomialPlotter(
+        polynomial,
+        dataPoints);
+
+    plotter.plot();
+}
+
+function outputIterativeApproximationResult(approximationResult) {
+
+    var result = approximationResult.bestApproximation.bspline;
+    var cp = result.getControlPoints();
+    var output = 'controlPoints:\n';
+
+    for (var i = 0; i < cp.length; i++) {
+        output += cp[i].x + '\t' + cp[i].y + '\n'
     }
 
-    var blob = new Blob([output], {type: "text/plain;charset=utf-8"});
+    output += 'knots:\n';
+    output += result.getKnots() + '\n';
 
-    saveAs(blob,"Approximation Result.txt");
+    if (controlPanelViewModel.compactApproximationParameters() == 'yes') {
+        output += 'compression_slices:\n';
+        output += result.compression.rangeSlices + '\n';
+        output += 'compression_parameters:\n';
+        output += result.compression.compressedParameters + '\n';
+    }
+
+    output += 'order:' + result.getOrder() + '\n';
+
+    output += 'polynomial functions of X(t):\n';
+    var xFunctions = result.getXFunctions();
+
+    for(var i=0;i<xFunctions.length;i++){
+        output += xFunctions[i].func.toString() + '\n';
+    }
+
+    output += 'polynomail functions of Y(t):\n';
+    var yFunctions = result.getYFunctions();
+    for(var i=0;i<yFunctions.length;i++){
+        output += yFunctions[i].func.toString() + '\n';
+    }
+
+    var blob = new Blob([output], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, "Approximation Result.txt");
+
 }
 
 function setResultPanel(result) {
@@ -204,50 +265,50 @@ function setResultPanel(result) {
 
 }
 
-function getFittingStrategy(){
+function getFittingStrategy() {
 
     var parameterSelectionStrategy = null;
     var knotSelectionStrategy = null;
     var compressionStrategy = null;
 
-    if(controlPanelViewModel.parameterSelection()=='chord-length')
+    if (controlPanelViewModel.parameterSelection() == 'chord-length')
         parameterSelectionStrategy = new ParameterSelectionStrategies.ChordLengthStrategy();
-    else if(controlPanelViewModel.parameterSelection()=='centripetal')
+    else if (controlPanelViewModel.parameterSelection() == 'centripetal')
         parameterSelectionStrategy = new ParameterSelectionStrategies.CentripetalStrategy();
-    else if(controlPanelViewModel.parameterSelection()=='x-length')
+    else if (controlPanelViewModel.parameterSelection() == 'x-length')
         parameterSelectionStrategy = new ParameterSelectionStrategies.XLengthStrategy();
-    else if(controlPanelViewModel.parameterSelection()=='uniformly-spaced')
+    else if (controlPanelViewModel.parameterSelection() == 'uniformly-spaced')
         parameterSelectionStrategy = new ParameterSelectionStrategies.UniformlySpacedStrategy();
-    else if(controlPanelViewModel.parameterSelection()=='universal')
+    else if (controlPanelViewModel.parameterSelection() == 'universal')
         parameterSelectionStrategy = new ParameterSelectionStrategies.UniversalStrategy();
 
-    if(controlPanelViewModel.knotSelection()=='uniformly-spaced')
+    if (controlPanelViewModel.knotSelection() == 'uniformly-spaced')
         knotSelectionStrategy = new KnotSelectionStrategies.UniformlySpacedStrategy();
-    else if(controlPanelViewModel.knotSelection()=='deboor-average')
+    else if (controlPanelViewModel.knotSelection() == 'deboor-average')
         knotSelectionStrategy = new KnotSelectionStrategies.DeboorAverageApproximationStrategy(controlPanelViewModel.fittingMode());
 
-    if(controlPanelViewModel.parameterSelection()=='universal')
+    if (controlPanelViewModel.parameterSelection() == 'universal')
         knotSelectionStrategy = null;
 
-    if(controlPanelViewModel.compactApproximationParameters()=='yes'){
+    if (controlPanelViewModel.compactApproximationParameters() == 'yes') {
         compressionStrategy = new CompressionStrategy(controlPanelViewModel.compactApproximationParametersQuality(),
-        controlPanelViewModel.compactApproximationBitLength());
+            controlPanelViewModel.compactApproximationBitLength());
     }
 
-    return new FittingStrategy(parameterSelectionStrategy,knotSelectionStrategy,compressionStrategy);
+    return new FittingStrategy(parameterSelectionStrategy, knotSelectionStrategy, compressionStrategy);
 
 }
 
-function getIterativeApproximationStrategy(){
+function getIterativeApproximationStrategy() {
 
     var iterativeApproximationStrategy = null;
 
-    var iterativeApproximationStrategy = 
+    var iterativeApproximationStrategy =
         new IterativeApproximationStrategy(controlPanelViewModel.approximationSettings.initialNumberOfControlPoints(),
-        controlPanelViewModel.approximationSettings.approximationEndCondition(),
-        controlPanelViewModel.approximationSettings.approximationEndCondition()=='error-bounded'
-        ?controlPanelViewModel.approximationSettings.errorBound()
-        :controlPanelViewModel.approximationSettings.maxNumberOfControlPoints());
+            controlPanelViewModel.approximationSettings.approximationEndCondition(),
+            controlPanelViewModel.approximationSettings.approximationEndCondition() == 'error-bounded'
+                ? controlPanelViewModel.approximationSettings.errorBound()
+                : controlPanelViewModel.approximationSettings.maxNumberOfControlPoints());
 
     return iterativeApproximationStrategy;
 }

@@ -1,6 +1,5 @@
 var RamerDouglasPeuckerAlgorithm = function () {
 
-
     function distanceOfPointFromLine(p, p1, p2) {
 
         var x = p1.x,
@@ -78,6 +77,5 @@ var RamerDouglasPeuckerAlgorithm = function () {
 
         return points;
     };
-
 
 };

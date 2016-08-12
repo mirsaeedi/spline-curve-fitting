@@ -103,11 +103,14 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="">
-                                        Spline
+                                        Approximator
                                     </label>
                                     <select class="form-control" data-bind="value:spline">
                                         <option selected value="bspline">B-Spline</option>
                                         <option value="bezier">Bezier</option>
+                                        <option value="chebyshevPolynomialsFirstKind">Chebyshev Polynomials First Kind</option>
+                                        <option value="LaguerrePolynomials">Laguerre Polynomials</option>
+                                        <option value="piecewiseApproximation">Piecewise Approximation</option>
                                     </select>
                                 </div>
                             </div>
@@ -366,6 +369,7 @@
     <script src="./wwwroot/lib/nerdamer/algebra.js"></script>
     <script src="./wwwroot/lib/nerdamer/solve.js"></script>
     <script src="./wwwroot/lib/nerdamer/calculus.js"></script>
+    <script src="./wwwroot/lib/numeric/numeric.min.js"></script>
 
     <script src="./wwwroot/js/Bezier/BezierPlotter.js"></script>
     <script src="./wwwroot/js/Bezier/Bezier.js"></script>
@@ -386,6 +390,26 @@
     <script src="./wwwroot/js/bspline/knotSelectionStrategies.js"></script>
     <script src="./wwwroot/js/bspline/ParameterSelectionStrategies.js"></script>
     <script src="./wwwroot/js/bspline/ParameterCompressor.js"></script>
+
+    <script src="./wwwroot/js/FunctionApproximation/Linear/LeastSquareApproximation.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Linear/LinearFunction.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Linear/LinearPlotter.js"></script>
+
+    <script src="./wwwroot/js/FunctionApproximation/Linear/Models/LaguerrePolynomials.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Linear/Models/ReciprocalFunc.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Linear/Models/ChebyshevPolynomialsFirstKind.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Linear/Models/MonimialFunc.js"></script>
+    
+    <script src="./wwwroot/js/FunctionApproximation/Non-Linear/jsfit.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Non-Linear/LevenbergMarquardtApproximation.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Non-Linear/NonLinearFunction.js"></script>
+
+    <script src="./wwwroot/js/FunctionApproximation/Non-Linear/Models/Guassian.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Non-Linear/Models/LinearModel.js"></script>
+
+    <script src="./wwwroot/js/FunctionApproximation/Piecewise/PiecewiseApproximator.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Piecewise/PiecewisePlotter.js"></script>
+    <script src="./wwwroot/js/FunctionApproximation/Piecewise/SegmentsDefiner.js"></script>
 
     <script src="./wwwroot/js/main.js"></script>
 

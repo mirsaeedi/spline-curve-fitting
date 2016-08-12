@@ -3,13 +3,13 @@ var BSplineIterativeApproximationPlotter = function (approximationResult) {
     this.plot = function (divElementId) {
 
         $('#' + divElementId).width($($('#' + divElementId)
-        .parent()).width());
+            .parent()).width());
 
         var curve = {
             x: [],
             y: [],
             type: 'spline',
-            name:'Error'
+            name: 'Error'
         };
 
         for (var i = 0; i < approximationResult.approximations.length; i++) {
@@ -20,7 +20,29 @@ var BSplineIterativeApproximationPlotter = function (approximationResult) {
 
         var data = [curve];
 
-        Plotly.newPlot(divElementId, data);
+
+
+        var layout = {
+            title: 'Comparing Max Error Of Each Iteration',
+            xaxis: {
+                title: 'Number Of Control Points (Iteration)',
+                titlefont: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#7f7f7f'
+                }
+            },
+            yaxis: {
+                title: 'Maximum Error',
+                titlefont: {
+                    family: 'Courier New, monospace',
+                    size: 18,
+                    color: '#7f7f7f'
+                }
+            }
+        };
+
+        Plotly.newPlot(divElementId, data,layout);
 
     }
 

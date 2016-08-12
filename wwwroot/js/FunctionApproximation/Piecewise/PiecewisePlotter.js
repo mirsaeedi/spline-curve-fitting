@@ -1,12 +1,9 @@
-﻿var BSplinePlotter = function (bspline, dataPoints, noiseLessPoints, approximationResult) {
+var PiecewisePlotter = function (segments, dataPoints) {
 
     this.plot = function () {
 
         plotCurve();
-
-        if (approximationResult) {
-            plotError();
-        }
+        plotError();
     }
 
     var plotError = function () {
@@ -21,15 +18,18 @@
             name: 'Error'
         };
 
-        for (var i = 0; i < dataPoints.length; i++) {
+        var pointIndex = 0;
+        for(var i=0;i<segments.length;i++){    
+            for(var j=0;j<segments[i].points.length;j++){
 
-            curve.x.push(i + 1);
-            curve.y.push(approximationResult.error.distances[i]);
-
+                    y=segments[i].func.compute(segments[i].points[j].x);
+                    curve.x.push(++pointIndex);
+                    curve.y.push(Math.abs(segments[i].points[j].y - y));
+            }
         }
 
         var layout = {
-            title: 'Curve Error (Point By Point)',
+            title: 'Residuals',
             xaxis: {
                 title: 'Index Of Data Point',
                 titlefont: {
@@ -49,7 +49,7 @@
         };
 
         var data = [curve];
-        Plotly.newPlot('error-canvas', data,layout);
+        Plotly.newPlot('error-canvas', data, layout);
 
     }
 
@@ -59,37 +59,31 @@
             .parent()).width(), $(window).height() * 1.5);
 
         var curvePoints = [];
-        /*
-                curvePoints.push(dataPoints[0]);
-                for (var i = dataPoints[1].x; i < dataPoints[dataPoints.length-1].x; i+=0.1) {
-        
-                    var t = bspline.mapXToParameter(i);
-        
-                    if(t){
-                        var point = bspline.deboorEvaluation(t);
-                        curvePoints.push(point);
-                    }
-                    else{
-                        console.log(i);
-                    }
-        
+
+        for(var i=0;i<segments.length;i++){
+
+            for(var x=segments[i].points[0].x;x<=segments[i].points[segments[i].points.length-1].x;x+=0.01){
+
+                    y=segments[i].func.compute(x);
+                    curvePoints.push(new Point(x,y));
+            }
+
+            if(segments[i].transient){
+
+                for(var x=segments[i].transient.firstX;x<=segments[i].transient.secondX;x+=0.001){
+
+                    y=segments[i].transient.func.compute(x);
+                    curvePoints.push(new Point(x,y));
                 }
-                curvePoints.push(dataPoints[dataPoints.length-1]);*/
-
-
-        for (var i = 0; i < 1; i += 0.001) {
-
-            var point = bspline.deboorEvaluation(i);
-            curvePoints.push(point);
-
+            }
         }
 
         plotDrawer.draw(curvePoints,
             {},
             {},
-            bspline.getControlPoints(),
+            null,
             dataPoints,
-            noiseLessPoints);
+            null);
 
     }
 }

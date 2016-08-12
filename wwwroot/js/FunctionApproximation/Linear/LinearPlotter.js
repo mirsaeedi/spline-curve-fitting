@@ -1,12 +1,8 @@
-﻿var BSplinePlotter = function (bspline, dataPoints, noiseLessPoints, approximationResult) {
+var LinearPlotter = function (linearFunction, dataPoints) {
 
     this.plot = function () {
 
         plotCurve();
-
-        if (approximationResult) {
-            plotError();
-        }
     }
 
     var plotError = function () {
@@ -49,7 +45,7 @@
         };
 
         var data = [curve];
-        Plotly.newPlot('error-canvas', data,layout);
+        Plotly.newPlot('error-canvas', data, layout);
 
     }
 
@@ -59,37 +55,19 @@
             .parent()).width(), $(window).height() * 1.5);
 
         var curvePoints = [];
-        /*
-                curvePoints.push(dataPoints[0]);
-                for (var i = dataPoints[1].x; i < dataPoints[dataPoints.length-1].x; i+=0.1) {
-        
-                    var t = bspline.mapXToParameter(i);
-        
-                    if(t){
-                        var point = bspline.deboorEvaluation(t);
-                        curvePoints.push(point);
-                    }
-                    else{
-                        console.log(i);
-                    }
-        
-                }
-                curvePoints.push(dataPoints[dataPoints.length-1]);*/
 
+        for (var x = dataPoints[0].x; x <= dataPoints[dataPoints.length - 1].x; x += 0.1) {
 
-        for (var i = 0; i < 1; i += 0.001) {
-
-            var point = bspline.deboorEvaluation(i);
-            curvePoints.push(point);
-
+            var y = linearFunction.compute(x);
+            curvePoints.push(new Point(x,y));
         }
 
         plotDrawer.draw(curvePoints,
             {},
             {},
-            bspline.getControlPoints(),
+            null,
             dataPoints,
-            noiseLessPoints);
+            null);
 
     }
 }
