@@ -18,7 +18,7 @@ function getSegments() {
         {
             firstPointIndex: 31,
             lastPointIndex: 51,
-            order: 3,
+            order: 2,
             model: MonomialFunc,
             approximationType: 'linear'
         }];

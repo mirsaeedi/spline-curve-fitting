@@ -108,17 +108,6 @@
                                     <select class="form-control" data-bind="value:spline">
                                         <option selected value="bspline">B-Spline</option>
                                         <option value="bezier">Bezier</option>
-                                        <option value="chebyshevPolynomialsFirstKind">Chebyshev Polynomials First Kind</option>
-                                        <option value="chebyshevPolynomialsSecondKind">Chebyshev Polynomials Second Kind</option>
-                                        <option value="BesselPolynomial">Bessel Polynomial</option>
-                                        <option value="LegendrePolynomial">Legendre Polynomial</option>
-                                        <option value="LaguerrePolynomials">Laguerre Polynomials</option>
-                                        <option value="MonomialPolynomials">Monomial Polynomials</option>
-                                        <option value="LinearReciprocal">Linear Reciprocal</option>
-                                        <option value="NonLinearReciprocal">Non-Linear Reciprocal</option>
-                                        <option value="NonLinearExponential">Non-Linear Exponential</option>
-                                        <option value="NonLinearGuasian">Non-Linear Guasian</option>
-                                        <option value="NonLinearSQRT">Non-Linear SQRT</option>
                                         <option value="piecewiseApproximation">Piecewise Approximation</option>
                                     </select>
                                 </div>
@@ -143,15 +132,15 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-3" data-bind="visible:spline()=='bspline'">
                                 <div class="form-group">
                                     <label class="">
                                         Fitting Mode
                                     </label>
                                     <select class="form-control" data-bind="value:fittingMode">
                                         <option value="controlPoints">Using Control Points</option>
-                                        <option data-bind="visible:spline()=='bspline'" value="interpolation">Interpolation</option>
-                                        <option data-bind="visible:spline()=='bspline'" value="approximation">Approximation</option>
+                                        <option value="interpolation">Interpolation</option>
+                                        <option value="approximation">Approximation</option>
                                     </select>
                                 </div>
                             </div>
@@ -248,6 +237,8 @@
                                         File
                                     </label>
                                     <input id="file" data-bind="value:file" class="form-control" type="file" value="" />
+                                    <label data-bind="visible:spline()=='bezier'" class="small">You need to provide a file containing Bezier control points</label>
+                                    <label data-bind="visible:spline()=='piecewiseApproximation'" class="small">Dataset aside, You need to define the segments by modifying the SegmentDefiner.js</label>
                                 </div>
                             </div>
                         </div>
