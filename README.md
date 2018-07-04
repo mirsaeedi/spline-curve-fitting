@@ -32,7 +32,7 @@ You can select following functions as segment approximator.
 11. **Monomial Polynomials**
 
 You need to provide the panel with an input file containing your points. This file must be in a form of a [JSON](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test1.txt) or a [white-space](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test5.txt) seperated file.
-You need define your segment by modifing the [**_SegmentDefiner_**](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/wwwroot/js/FunctionApproximation/Piecewise/SegmentsDefiner.js) file.
+You need define your segment by modifying the [**_SegmentsDefiner_**](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/wwwroot/js/FunctionApproximation/Piecewise/SegmentsDefiner.js) file.
 
 # Usage
 
