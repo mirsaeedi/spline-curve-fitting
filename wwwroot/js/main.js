@@ -21,6 +21,29 @@ var controlPanelViewModel = {
         maxNumberOfControlPoints: ko.observable(100),
     },
     plot: function () {
+
+        /*var dataPoints=[];
+
+        for(var i=0;i<10;i+=0.1){
+
+            dataPoints.push({x:i,y:3*i*i*Math.sin(i)});
+
+        }
+
+        for(var i=10;i<15;i+=0.1){
+
+            dataPoints.push({x:i,y:-135+Math.sin(i)*50});
+
+        }
+
+        for(var i=15;i<=20;i+=0.1){
+
+            dataPoints.push({x:i,y:354 -(i*i*2)});
+
+        }
+
+        plot({dataPoints:dataPoints});*/
+
         InputReader.read($('#file')[0].files[0], plot);
     }
 }
