@@ -9,6 +9,8 @@ This project provide you with several curve fitting methods. Moreover, for each 
 For _B-Spline_ you can select from several _knot_ and _Parameter_ selection algorithms and you are free to choose the number of _control points_. Even you are able to find the curve with least error using _Error Limit Settings_.
 In addition, you need to provide the panel with an input file containing your points. This file must be in a form of a [JSON](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test1.txt) or a [white-space](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test5.txt) seperated file.
 
+You even can draw spline by providing _Control Points_. In this case you need to choose a [file](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/BSpline-ControlPoints/Test1.txt) which contains the control points, knots, and the order.
+
 ## Bezier Interpolation and Approximation
 
 For drawing a _Bezier_ curve you need to provide an input [file] containing _Control Points_.
@@ -32,7 +34,7 @@ You can select following functions as segment approximator.
 11. **Monomial Polynomials**
 
 You need to provide the panel with an input file containing your points. This file must be in a form of a [JSON](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test1.txt) or a [white-space](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Approximation-Interpolation/Test5.txt) seperated file.
-You need define your segment by modifying the [**_SegmentsDefiner_**](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/wwwroot/js/FunctionApproximation/Piecewise/SegmentsDefiner.js) file.
+You need define your segment by modifying the [**_SegmentsDefiner_**](https://github.com/mirsaeedi/spline-curve-fitting/blob/master/Test%20Data/Piecewise/SegmentsDefiner.js) file.
 
 # Usage
 
